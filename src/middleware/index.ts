@@ -18,8 +18,17 @@ export const isAuthenticated = async (req: express.Request, res: express.Respons
       return res.sendStatus(403);
     }
 
-    // Check if token exists in user's tokens
-    const tokenExists = user.authentication.tokens.some((t: { token: string }) => t.token === token);
+    // Check if token exists in user's tokens, and update lastUsed if it does
+    const tokenExists = user.authentication.tokens.some((t: { token: string, lastUsed: Date }) => {
+      if (t.token === token) {
+        t.lastUsed = new Date();
+        user.save();
+
+        return true;
+      }
+      return false;
+    });
+
     if (!tokenExists) {
       return res.sendStatus(403);
     }
