@@ -12,7 +12,7 @@ const UserSchema = new mongoose.Schema({
       type: [
         {
           token: { type: String, required: true },
-          lastUsed: { type: Date, default: Date.now },
+          lastUsed: { type: Date, required: true },
         },
       ],
       select: false,
