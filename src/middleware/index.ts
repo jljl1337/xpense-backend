@@ -4,7 +4,7 @@ import { getUserByEmail } from '../db/users';
 
 export const isAuthenticated = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
-    const { email }= req.params;
+    const { email }= req.body;
     const token = req.cookies['XPENSE-TOKEN'];
 
     // Check if token exists

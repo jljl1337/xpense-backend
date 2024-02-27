@@ -8,7 +8,7 @@ const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
 
 export const getUser = async (req: express.Request, res: express.Response) => {
   try {
-    const { email } = req.params;
+    const { email } = req.body;
     const user = await getUserByEmail(email);
 
     if (!user) {
@@ -24,14 +24,12 @@ export const getUser = async (req: express.Request, res: express.Response) => {
 
 export const updateUserInfo = async (req: express.Request, res: express.Response) => {
   try {
-    const { email } = req.params;
+    const { email, new_username, new_email  } = req.body;
     const user = await getUserByEmail(email);
 
     if (!user) {
       return res.status(404).json({ error: 'User with this email does not exist' }).end();
     }
-
-    const { new_username, new_email } = req.body;
 
     if (!new_username && !new_email) {
       return res.status(400).json({ error: 'New username or email is required' }).end();
@@ -61,14 +59,12 @@ export const updateUserInfo = async (req: express.Request, res: express.Response
 
 export const updateUserPassword = async (req: express.Request, res: express.Response) => {
   try {
-    const { email } = req.params;
+    const { email, old_password, new_password  } = req.body;
     const user = await getUserByEmail(email).select('+authentication.password +authentication.tokens');
 
     if (!user) {
       return res.status(404).json({ error: 'User with this email does not exist' }).end();
     }
-
-    const { old_password, new_password } = req.body;
 
     if (!old_password || !new_password) {
       return res.status(400).json({ error: 'Old and new password are required' }).end();
@@ -107,7 +103,7 @@ export const updateUserPassword = async (req: express.Request, res: express.Resp
 
 export const getUserCategories = async (req: express.Request, res: express.Response) => {
   try {
-    const { email } = req.params;
+    const { email } = req.body;
     const user = await getUserByEmail(email);
 
     if (!user) {
@@ -123,7 +119,7 @@ export const getUserCategories = async (req: express.Request, res: express.Respo
 
 export const addUserCategory = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, category } = req.params;
+    const { email, category } = req.body;
     const user = await getUserByEmail(email);
 
     if (!user) {
@@ -148,9 +144,7 @@ export const addUserCategory = async (req: express.Request, res: express.Respons
 
 export const updateUserCategory = async (req: express.Request, res: express.Response) => {
   try {
-    const email = req.params.email;
-    const old_category = req.params.category;
-    const { new_category } = req.body;
+    const { email, old_category, new_category } = req.body;
 
     const user = await getUserByEmail(email);
 
@@ -177,7 +171,7 @@ export const updateUserCategory = async (req: express.Request, res: express.Resp
 
 export const deleteUserCategory = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, category } = req.params;
+    const { email, category } = req.body;
     const user = await getUserByEmail(email);
 
     if (!user) {
