@@ -148,8 +148,10 @@ export const addUserCategory = async (req: express.Request, res: express.Respons
 
 export const updateUserCategory = async (req: express.Request, res: express.Response) => {
   try {
-    const { email } = req.params;
-    const { old_category, new_category } = req.body;
+    const email = req.params.email;
+    const old_category = req.params.category;
+    const { new_category } = req.body;
+
     const user = await getUserByEmail(email);
 
     if (!user) {

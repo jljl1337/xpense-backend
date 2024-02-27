@@ -9,6 +9,6 @@ export default (router: express.Router): void => {
   router.post('/users/:email/categories/:category', isAuthenticated, addUserCategory);
   router.patch('/users/:email', isAuthenticated, updateUserInfo);
   router.patch('/users/:email/password', isAuthenticated, updateUserPassword);
-  router.patch('/users/:email/categories/', isAuthenticated, updateUserCategory);
+  router.put('/users/:email/categories/:category', isAuthenticated, updateUserCategory);
   router.delete('/users/:email/categories/:category', isAuthenticated, deleteUserCategory);
 };
