@@ -24,8 +24,6 @@ app.use(bodyParser.json());
 
 const MONGODB_URL = process.env.MONGODB_URL
 
-console.log('MONGODB_URL: ', MONGODB_URL);
-
 mongoose.connect(MONGODB_URL)
   .then(() => {
     console.log('Connected to MongoDB');
