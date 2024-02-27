@@ -104,3 +104,97 @@ export const updateUserPassword = async (req: express.Request, res: express.Resp
     return res.sendStatus(400);
   }
 }
+
+export const getUserCategories = async (req: express.Request, res: express.Response) => {
+  try {
+    const { email } = req.params;
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User with this email does not exist' }).end();
+    }
+
+    return res.status(200).json(user.default_categories).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+}
+
+export const addUserCategory = async (req: express.Request, res: express.Response) => {
+  try {
+    const { email, category } = req.params;
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User with this email does not exist' }).end();
+    }
+
+    const categoryExist = user.books.some((categoryObject: { name: string }) => categoryObject.name === category);
+    if (categoryExist) {
+      return res.status(400).json({ error: 'Category already exists' }).end();
+    }
+
+    user.default_categories.push({ name: category });
+
+    await user.save();
+
+    return res.status(200).json(user).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+}
+
+export const updateUserCategory = async (req: express.Request, res: express.Response) => {
+  try {
+    const { email } = req.params;
+    const { old_category, new_category } = req.body;
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User with this email does not exist' }).end();
+    }
+
+    const categoryIndex = user.default_categories.findIndex((categoryObject: { name: string }) => categoryObject.name === old_category);
+
+    if (categoryIndex === -1) {
+      return res.status(400).json({ error: 'Category with this name does not exist' }).end();
+    }
+
+    user.default_categories[categoryIndex].name = new_category;
+
+    await user.save();
+
+    return res.status(200).json(user).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+}
+
+export const deleteUserCategory = async (req: express.Request, res: express.Response) => {
+  try {
+    const { email, category } = req.params;
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User with this email does not exist' }).end();
+    }
+
+    const categoryIndex = user.default_categories.findIndex((categoryObject: { name: string }) => categoryObject.name === category);
+
+    if (categoryIndex === -1) {
+      return res.status(400).json({ error: 'Category with this name does not exist' }).end();
+    }
+
+    user.default_categories.splice(categoryIndex, 1);
+
+    await user.save();
+
+    return res.status(200).json(user).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+}
