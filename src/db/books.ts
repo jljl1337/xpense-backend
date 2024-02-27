@@ -6,8 +6,9 @@ export const CategorySchema = new mongoose.Schema({
 
 const RecordSchema = new mongoose.Schema({
     category_id: { type: String, required: true },
-    date: { type: Date, default: Date.now },
-    remark: { type: String, required: true },
+    date: { type: Date, required: true },
+    amount: { type: Number, required: true },
+    remark: { type: String },
 });
 
 export const BookSchema = new mongoose.Schema({

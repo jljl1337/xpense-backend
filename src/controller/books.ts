@@ -95,15 +95,53 @@ export const addRecord = async (req: express.Request, res: express.Response) => 
       return res.status(404).json({ error: 'Book with this title does not exist' }).end();
     }
 
-    const record = req.body;
+    const { category_id, date, amount, remark} = req.body;
 
     // Check if category_id exists in book
-    const categoryExists = book.categories.some((category: any) => category._id.toString() === record.category_id);
+    const categoryExists = book.categories.some((category: any) => category._id.toString() === category_id);
     if (!categoryExists) {
       return res.status(400).json({ error: 'Category with this id does not exist in book' }).end();
     }
 
-    book.records.push(record);
+    book.records.push({
+      category_id,
+      date,
+      amount,
+      remark,
+    });
+
+    await user.save();
+
+    return res.status(200).json(user).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+}
+
+export const updateRecord = async (req: express.Request, res: express.Response) => {
+  try {
+    const { email, title, recordId } = req.params;
+    const user = await getUserByEmail(email).select('+books.records');
+
+    if (!user) {
+      return res.status(404).json({ error: 'User with this email does not exist' }).end();
+    }
+
+    const book = user.books.find((book: { title: string }) => book.title === title);
+
+    if (!book) {
+      return res.status(404).json({ error: 'Book with this title does not exist' }).end();
+    }
+
+    const recordIndex = book.records.findIndex((record: { id: string }) => record.id === recordId);
+
+    if (recordIndex === -1) {
+      return res.status(404).json({ error: 'Record with this id does not exist' }).end();
+    }
+
+    const updatedRecord = req.body;
+    book.records[recordIndex] = updatedRecord;
 
     await user.save();
 
