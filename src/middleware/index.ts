@@ -2,10 +2,12 @@ import express from 'express';
 
 import { getUserById } from '../db/users';
 
+const COOKIE_KEY = process.env.COOKIE_KEY;
+
 export const isAuthenticated = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
     const { userId }= req.params;
-    const token = req.cookies['XPENSE-TOKEN'];
+    const token = req.cookies[COOKIE_KEY];
 
     // Check if token exists
     if (!token) {

@@ -8,6 +8,7 @@ import { meetPasswordRequirements } from '../helper';
 
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
 const MAX_TOKENS = Number(process.env.MAX_TOKENS);
+const COOKIE_KEY = process.env.COOKIE_KEY;
 
 const generateToken = () => {
   return crypto.randomBytes(128).toString('base64');
@@ -52,7 +53,7 @@ export const login = async (req: express.Request, res: express.Response) => {
 
       await user.save();
 
-      res.cookie('XPENSE-TOKEN', token, {httpOnly: true});
+      res.cookie(COOKIE_KEY, token, {httpOnly: true});
 
       return res.status(200).json(user).end();
     });
