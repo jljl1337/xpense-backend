@@ -3,6 +3,7 @@ import bycrypt from 'bcrypt';
 
 import { getUserByEmail, getUserById } from '../db/users';
 import { meetPasswordRequirements } from '../helper';
+import { ObjectId } from 'mongoose';
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
 
@@ -160,7 +161,7 @@ export const updateUserCategory = async (req: express.Request, res: express.Resp
       return res.status(404).json({ error: 'User does not exist' }).end();
     }
     
-    const categoryIndex = user.default_categories.findIndex((categoryObject: { _id: string }) => categoryObject._id.toString() === categoryId);
+    const categoryIndex = user.default_categories.findIndex((categoryObject: { _id: ObjectId }) => categoryObject._id.toString() === categoryId);
 
     if (categoryIndex === -1) {
       return res.status(400).json({ error: 'Category does not exist' }).end();
@@ -186,7 +187,7 @@ export const deleteUserCategory = async (req: express.Request, res: express.Resp
       return res.status(404).json({ error: 'User does not exist' }).end();
     }
 
-    const categoryIndex = user.default_categories.findIndex((categoryObject: { _id: string }) => categoryObject._id.toString() === categoryId);
+    const categoryIndex = user.default_categories.findIndex((categoryObject: { _id: ObjectId }) => categoryObject._id.toString() === categoryId);
 
     if (categoryIndex === -1) {
       return res.status(400).json({ error: 'Category does not exist' }).end();
