@@ -1,18 +1,18 @@
 import express from 'express';
 import bycrypt from 'bcrypt';
 
-import { getUserByEmail } from '../db/users';
+import { getUserByEmail, getUserById } from '../db/users';
 import { meetPasswordRequirements } from '../helper';
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
 
 export const getUser = async (req: express.Request, res: express.Response) => {
   try {
-    const { email } = req.body;
-    const user = await getUserByEmail(email);
+    const { userId } = req.params;
+    const user = await getUserById(userId);
 
     if (!user) {
-      return res.status(404).json({ error: 'User with this email does not exist' }).end();
+      return res.status(404).json({ error: 'User does not exist' }).end();
     }
 
     return res.status(200).json(user).end();
@@ -24,15 +24,18 @@ export const getUser = async (req: express.Request, res: express.Response) => {
 
 export const updateUserInfo = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, new_username, new_email  } = req.body;
-    const user = await getUserByEmail(email);
-
-    if (!user) {
-      return res.status(404).json({ error: 'User with this email does not exist' }).end();
-    }
+    const { userId } = req.params;
+    const { new_username, new_email  } = req.body;
+    const userPromise = getUserById(userId);
 
     if (!new_username && !new_email) {
       return res.status(400).json({ error: 'New username or email is required' }).end();
+    }
+
+    const user = await userPromise;
+
+    if (!user) {
+      return res.status(404).json({ error: 'User does not exist' }).end();
     }
 
     if (new_username) {
@@ -59,15 +62,18 @@ export const updateUserInfo = async (req: express.Request, res: express.Response
 
 export const updateUserPassword = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, old_password, new_password  } = req.body;
-    const user = await getUserByEmail(email).select('+authentication.password +authentication.tokens');
-
-    if (!user) {
-      return res.status(404).json({ error: 'User with this email does not exist' }).end();
-    }
+    const { userId } = req.params;
+    const { old_password, new_password  } = req.body;
+    const userPromise = getUserById(userId).select('+authentication.password +authentication.tokens');
 
     if (!old_password || !new_password) {
       return res.status(400).json({ error: 'Old and new password are required' }).end();
+    }
+
+    const user = await userPromise;
+
+    if (!user) {
+      return res.status(404).json({ error: 'User with this email does not exist' }).end();
     }
 
     if (!meetPasswordRequirements(new_password)) {
@@ -103,11 +109,11 @@ export const updateUserPassword = async (req: express.Request, res: express.Resp
 
 export const getUserCategories = async (req: express.Request, res: express.Response) => {
   try {
-    const { email } = req.body;
-    const user = await getUserByEmail(email);
+    const { userId } = req.params;
+    const user = await getUserById(userId);
 
     if (!user) {
-      return res.status(404).json({ error: 'User with this email does not exist' }).end();
+      return res.status(404).json({ error: 'User does not exist' }).end();
     }
 
     return res.status(200).json(user.default_categories).end();
@@ -119,11 +125,12 @@ export const getUserCategories = async (req: express.Request, res: express.Respo
 
 export const addUserCategory = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, category } = req.body;
-    const user = await getUserByEmail(email);
+    const { userId } = req.params;
+    const { category } = req.body;
+    const user = await getUserById(userId);
 
     if (!user) {
-      return res.status(404).json({ error: 'User with this email does not exist' }).end();
+      return res.status(404).json({ error: 'User does not exist' }).end();
     }
 
     const categoryExist = user.books.some((categoryObject: { name: string }) => categoryObject.name === category);
@@ -144,18 +151,19 @@ export const addUserCategory = async (req: express.Request, res: express.Respons
 
 export const updateUserCategory = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, old_category, new_category } = req.body;
+    const { userId, categoryId } = req.params;
+    const { new_category } = req.body;
 
-    const user = await getUserByEmail(email);
+    const user = await getUserById(userId);
 
     if (!user) {
-      return res.status(404).json({ error: 'User with this email does not exist' }).end();
+      return res.status(404).json({ error: 'User does not exist' }).end();
     }
-
-    const categoryIndex = user.default_categories.findIndex((categoryObject: { name: string }) => categoryObject.name === old_category);
+    
+    const categoryIndex = user.default_categories.findIndex((categoryObject: { _id: string }) => categoryObject._id.toString() === categoryId);
 
     if (categoryIndex === -1) {
-      return res.status(400).json({ error: 'Category with this name does not exist' }).end();
+      return res.status(400).json({ error: 'Category does not exist' }).end();
     }
 
     user.default_categories[categoryIndex].name = new_category;
@@ -171,17 +179,17 @@ export const updateUserCategory = async (req: express.Request, res: express.Resp
 
 export const deleteUserCategory = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, category } = req.body;
-    const user = await getUserByEmail(email);
+    const { userId, categoryId } = req.params;
+    const user = await getUserById(userId);
 
     if (!user) {
-      return res.status(404).json({ error: 'User with this email does not exist' }).end();
+      return res.status(404).json({ error: 'User does not exist' }).end();
     }
 
-    const categoryIndex = user.default_categories.findIndex((categoryObject: { name: string }) => categoryObject.name === category);
+    const categoryIndex = user.default_categories.findIndex((categoryObject: { _id: string }) => categoryObject._id.toString() === categoryId);
 
     if (categoryIndex === -1) {
-      return res.status(400).json({ error: 'Category with this name does not exist' }).end();
+      return res.status(400).json({ error: 'Category does not exist' }).end();
     }
 
     user.default_categories.splice(categoryIndex, 1);

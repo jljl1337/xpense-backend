@@ -4,11 +4,12 @@ import { addUserCategory, deleteUserCategory, getUser, getUserCategories, update
 import { isAuthenticated } from '../middleware';
 
 export default (router: express.Router): void => {
-  router.get('/users', isAuthenticated, getUser);
-  router.get('/users/categories', isAuthenticated, getUserCategories);
-  router.post('/users/categories', isAuthenticated, addUserCategory);
-  router.patch('/users', isAuthenticated, updateUserInfo);
-  router.patch('/users/password', isAuthenticated, updateUserPassword);
-  router.put('/users/categories', isAuthenticated, updateUserCategory);
-  router.delete('/users/categories', isAuthenticated, deleteUserCategory);
+  router.get('/users/:userId', isAuthenticated, getUser);
+  router.patch('/users/:userId', isAuthenticated, updateUserInfo);
+  router.patch('/users/:userId/password', isAuthenticated, updateUserPassword);
+
+  router.get('/users/:userId/categories', isAuthenticated, getUserCategories);
+  router.post('/users/:userId/categories', isAuthenticated, addUserCategory);
+  router.put('/users/:userId/categories/:categoryId', isAuthenticated, updateUserCategory);
+  router.delete('/users/:userId/categories/:categoryId', isAuthenticated, deleteUserCategory);
 };

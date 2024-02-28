@@ -1,10 +1,10 @@
 import express from 'express';
 
-import { getUserByEmail } from '../db/users';
+import { getUserById } from '../db/users';
 
 export const isAuthenticated = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
-    const { email }= req.body;
+    const { userId }= req.params;
     const token = req.cookies['XPENSE-TOKEN'];
 
     // Check if token exists
@@ -13,7 +13,7 @@ export const isAuthenticated = async (req: express.Request, res: express.Respons
     }
 
     // Check if user exists
-    const user = await getUserByEmail(email).select('+authentication.tokens');
+    const user = await getUserById(userId).select('+authentication.tokens');
     if (!user) {
       return res.sendStatus(403);
     }
