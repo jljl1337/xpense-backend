@@ -7,7 +7,7 @@ export const addBook = async (req: express.Request, res: express.Response) => {
   try {
     const { userId } = req.params;
     const { title } = req.body;
-    const user = await getUserById(userId).select('+books.records');
+    const user = await getUserById(userId);
 
     if (!user) {
       return res.status(404).json({ error: 'User does not exist' }).end();
@@ -56,10 +56,36 @@ export const getBook = async (req: express.Request, res: express.Response) => {
   }
 }
 
+export const updateBook = async (req: express.Request, res: express.Response) => {
+  try {
+    const { userId, bookId } = req.params;
+    const { new_title } = req.body;
+    const user = await getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User does not exist' }).end();
+    }
+
+    const book = user.books.find((book: { _id: ObjectId }) => book._id.toString() === bookId);
+    if (!book) {
+      return res.status(404).json({ error: 'Book does not exist' }).end();
+    }
+
+    book.title = new_title;
+
+    await user.save();
+
+    return res.status(200).json(user).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+}
+
 export const deleteBook = async (req: express.Request, res: express.Response) => {
   try {
     const { userId, bookId } = req.params;
-    const user = await getUserById(userId).select('+books.records');
+    const user = await getUserById(userId);
 
     if (!user) {
       return res.status(404).json({ error: 'User does not exist' }).end();
@@ -142,8 +168,19 @@ export const updateRecord = async (req: express.Request, res: express.Response) 
       return res.status(404).json({ error: 'Record does not exist' }).end();
     }
 
-    const updatedRecord = req.body;
-    book.records[recordIndex] = updatedRecord;
+    for (const key in req.body) {
+
+      if (key === 'category_id') {
+        const categoryExists = book.categories.some((category: any) => category._id.toString() === req.body.category_id);
+        if (!categoryExists) {
+          return res.status(400).json({ error: 'Category does not exist in book' }).end();
+        }
+      }
+
+      if (Object.prototype.hasOwnProperty.call(req.body, key)) {
+        book.records[recordIndex][key] = req.body[key];
+      }
+    }
 
     await user.save();
 
