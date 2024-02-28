@@ -4,8 +4,8 @@ import { addBook, addRecord, deleteBook, deleteRecord, getBook } from '../contro
 import { isAuthenticated } from '../middleware';
 
 export default (router: express.Router): void => {
-  router.get('/users/:userId/books/:bookId', isAuthenticated, getBook);
   router.post('/users/:userId/books/', isAuthenticated, addBook);
+  router.get('/users/:userId/books/:bookId', isAuthenticated, getBook);
   router.delete('/users/:userId/books/:bookId', isAuthenticated, deleteBook);
 
   router.post('/users/:userId/books/:bookId/records', isAuthenticated, addRecord);

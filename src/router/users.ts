@@ -8,8 +8,8 @@ export default (router: express.Router): void => {
   router.patch('/users/:userId', isAuthenticated, updateUserInfo);
   router.patch('/users/:userId/password', isAuthenticated, updateUserPassword);
 
-  router.get('/users/:userId/categories', isAuthenticated, getUserCategories);
   router.post('/users/:userId/categories', isAuthenticated, addUserCategory);
+  router.get('/users/:userId/categories', isAuthenticated, getUserCategories);
   router.put('/users/:userId/categories/:categoryId', isAuthenticated, updateUserCategory);
   router.delete('/users/:userId/categories/:categoryId', isAuthenticated, deleteUserCategory);
 };
