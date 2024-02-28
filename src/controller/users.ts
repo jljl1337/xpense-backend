@@ -45,7 +45,7 @@ export const updateUserInfo = async (req: express.Request, res: express.Response
 
     if (new_email) {
       const other_user = await getUserByEmail(new_email);
-      if (other_user) {
+      if (other_user && other_user._id.toString() !== userId) {
         return res.status(400).json({ error: 'User with this email already exists' }).end();
       }
 
