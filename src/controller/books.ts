@@ -108,6 +108,98 @@ export const deleteBook = async (req: express.Request, res: express.Response) =>
   }
 }
 
+export const addBookCategory = async (req: express.Request, res: express.Response) => {
+  try {
+    const { userId, bookId } = req.params;
+    const { name } = req.body;
+    const user = await getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User does not exist' }).end();
+    }
+
+    const book = user.books.find((book: { _id: ObjectId }) => book._id.toString() === bookId);
+    if (!book) {
+      return res.status(404).json({ error: 'Book does not exist' }).end();
+    }
+
+    const categoryExists = book.categories.some((category: any) => category.name === name);
+    if (categoryExists) {
+      return res.status(400).json({ error: 'Category with this name already exists in this book' }).end();
+    }
+
+    book.categories.push({ name });
+
+    await user.save();
+
+    return res.status(200).json(user).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+}
+
+export const updateBookCategory = async (req: express.Request, res: express.Response) => {
+  try {
+    const { userId, bookId, categoryId } = req.params;
+    const { new_name } = req.body;
+    const user = await getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User does not exist' }).end();
+    }
+
+    const book = user.books.find((book: { _id: ObjectId }) => book._id.toString() === bookId);
+    if (!book) {
+      return res.status(404).json({ error: 'Book does not exist' }).end();
+    }
+
+    const categoryIndex = book.categories.findIndex((category: { _id: ObjectId }) => category._id.toString() === categoryId);
+    if (categoryIndex === -1) {
+      return res.status(404).json({ error: 'Category does not exist' }).end();
+    }
+
+    book.categories[categoryIndex].name = new_name;
+
+    await user.save();
+
+    return res.status(200).json(user).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+}
+
+export const deleteBookCategory = async (req: express.Request, res: express.Response) => {
+  try {
+    const { userId, bookId, categoryId } = req.params;
+    const user = await getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User does not exist' }).end();
+    }
+
+    const book = user.books.find((book: { _id: ObjectId }) => book._id.toString() === bookId);
+    if (!book) {
+      return res.status(404).json({ error: 'Book does not exist' }).end();
+    }
+
+    const categoryIndex = book.categories.findIndex((category: { _id: ObjectId }) => category._id.toString() === categoryId);
+    if (categoryIndex === -1) {
+      return res.status(404).json({ error: 'Category does not exist' }).end();
+    }
+
+    book.categories.splice(categoryIndex, 1);
+
+    await user.save();
+
+    return res.status(200).json(user).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+}
+
 export const addRecord = async (req: express.Request, res: express.Response) => {
   try {
     const { userId, bookId } = req.params;
