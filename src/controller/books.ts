@@ -3,27 +3,6 @@ import express from 'express';
 import { getUserById } from '../db/users';
 import { ObjectId } from 'mongoose';
 
-export const getBook = async (req: express.Request, res: express.Response) => {
-  try {
-    const { userId, bookId } = req.params;
-    const user = await getUserById(userId).select('+books.records');
-
-    if (!user) {
-      return res.status(404).json({ error: 'User does not exist' }).end();
-    }
-
-    const book = user.books.find((book: { _id: ObjectId }) => book._id.toString() === bookId);
-    if (!book) {
-      return res.status(404).json({ error: 'Book does not exist' }).end();
-    }
-
-    return res.status(200).json(book).end();
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(400);
-  }
-}
-
 export const addBook = async (req: express.Request, res: express.Response) => {
   try {
     const { userId } = req.params;
@@ -50,6 +29,27 @@ export const addBook = async (req: express.Request, res: express.Response) => {
     await user.save();
 
     return res.status(200).json(user).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+}
+
+export const getBook = async (req: express.Request, res: express.Response) => {
+  try {
+    const { userId, bookId } = req.params;
+    const user = await getUserById(userId).select('+books.records');
+
+    if (!user) {
+      return res.status(404).json({ error: 'User does not exist' }).end();
+    }
+
+    const book = user.books.find((book: { _id: ObjectId }) => book._id.toString() === bookId);
+    if (!book) {
+      return res.status(404).json({ error: 'Book does not exist' }).end();
+    }
+
+    return res.status(200).json(book).end();
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
