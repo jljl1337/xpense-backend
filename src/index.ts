@@ -12,6 +12,8 @@ import router from './router';
 const PORT = Number(process.env.PORT);
 const KEY_PATH = process.env.KEY_PATH;
 const CERT_PATH = process.env.CERT_PATH;
+const SERVICE_NAME = process.env.SERVICE_NAME;
+const VERSION = process.env.VERSION;
 
 const app = express();
 
@@ -27,7 +29,7 @@ const certificate = fs.readFileSync(CERT_PATH, 'utf8');
 const server = https.createServer({ key: privateKey, cert: certificate }, app);
 
 server.listen(PORT, () => {
-  console.log('Server is running on port: %d', PORT);
+  console.log(`Server is running on port: ${PORT}`);
 });
 
 const MONGODB_URL = process.env.MONGODB_URL
@@ -44,4 +46,4 @@ server.on('error', (error: any) => {
   console.log('Error: ', error);
 });
 
-app.use('/', router());
+app.use(`/${SERVICE_NAME}/v${VERSION}`, router());
