@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "generate .env.example",
+      "type": "shell",
+      "command": "cp .env .env.example && sed -i 's/=.*/=/g' .env.example",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
