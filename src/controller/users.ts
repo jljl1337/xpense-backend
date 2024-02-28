@@ -108,22 +108,6 @@ export const updateUserPassword = async (req: express.Request, res: express.Resp
   }
 }
 
-export const getUserCategories = async (req: express.Request, res: express.Response) => {
-  try {
-    const { userId } = req.params;
-    const user = await getUserById(userId);
-
-    if (!user) {
-      return res.status(404).json({ error: 'User does not exist' }).end();
-    }
-
-    return res.status(200).json(user.default_categories).end();
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(400);
-  }
-}
-
 export const addUserCategory = async (req: express.Request, res: express.Response) => {
   try {
     const { userId } = req.params;
@@ -144,6 +128,22 @@ export const addUserCategory = async (req: express.Request, res: express.Respons
     await user.save();
 
     return res.status(200).json(user).end();
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(400);
+  }
+}
+
+export const getUserCategories = async (req: express.Request, res: express.Response) => {
+  try {
+    const { userId } = req.params;
+    const user = await getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User does not exist' }).end();
+    }
+
+    return res.status(200).json(user.default_categories).end();
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
