@@ -4,11 +4,11 @@ import express from 'express';
 
 export default (router: express.Router): void => {
   router.get('/test/users', (req, res) => {
-    getUsers().then((users) => {
+    getUsers().select('+authentication.password +authentication.tokens').then((users) => {
       res.status(200).json(users).end();
     }).catch((error) => {
       console.log(error);
-      res.sendStatus(400);
+      res.status(400).json({ error: error.message }).end();
     });
   });
   router.get('/test/categories', (req, res) => {
@@ -16,7 +16,7 @@ export default (router: express.Router): void => {
       res.status(200).json(categories).end();
     }).catch((error) => {
       console.log(error);
-      res.sendStatus(400);
+      res.status(400).json({ error: error.message }).end();
     });
   });
   router.get('/test2', (req, res) => res.send('test2'))

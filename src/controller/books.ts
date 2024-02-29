@@ -21,7 +21,7 @@ export const addBook = async (req: express.Request, res: express.Response) => {
 
     const newBook = {
       title,
-      categories: user.default_categories,
+      categories: user.defaultCategories,
     }
 
     user.books.push(newBook);
@@ -31,7 +31,7 @@ export const addBook = async (req: express.Request, res: express.Response) => {
     return res.sendStatus(200);
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: error.message }).end();
   }
 }
 
@@ -52,14 +52,14 @@ export const getBook = async (req: express.Request, res: express.Response) => {
     return res.status(200).json(book).end();
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: error.message }).end();
   }
 }
 
 export const updateBook = async (req: express.Request, res: express.Response) => {
   try {
     const { userId, bookId } = req.params;
-    const { new_title } = req.body;
+    const { newTitle } = req.body;
     const user = await getUserById(userId);
 
     if (!user) {
@@ -71,14 +71,14 @@ export const updateBook = async (req: express.Request, res: express.Response) =>
       return res.status(404).json({ error: 'Book does not exist' }).end();
     }
 
-    book.title = new_title;
+    book.title = newTitle;
 
     await user.save();
 
     return res.sendStatus(200);
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: error.message }).end();
   }
 }
 
@@ -104,7 +104,7 @@ export const deleteBook = async (req: express.Request, res: express.Response) =>
     return res.sendStatus(200);
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: error.message }).end();
   }
 }
 
@@ -135,14 +135,14 @@ export const addBookCategory = async (req: express.Request, res: express.Respons
     return res.sendStatus(200);
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: error.message }).end();
   }
 }
 
 export const updateBookCategory = async (req: express.Request, res: express.Response) => {
   try {
     const { userId, bookId, categoryId } = req.params;
-    const { new_name } = req.body;
+    const { newName } = req.body;
     const user = await getUserById(userId);
 
     if (!user) {
@@ -159,14 +159,14 @@ export const updateBookCategory = async (req: express.Request, res: express.Resp
       return res.status(404).json({ error: 'Category does not exist' }).end();
     }
 
-    book.categories[categoryIndex].name = new_name;
+    book.categories[categoryIndex].name = newName;
 
     await user.save();
 
     return res.sendStatus(200);
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: error.message }).end();
   }
 }
 
@@ -189,6 +189,9 @@ export const deleteBookCategory = async (req: express.Request, res: express.Resp
       return res.status(404).json({ error: 'Category does not exist' }).end();
     }
 
+    // Check if category is used in any record
+    const categoryUsed = book.records.some((record: { categoryId: string }) => record.categoryId === categoryId);
+
     book.categories.splice(categoryIndex, 1);
 
     await user.save();
@@ -196,7 +199,7 @@ export const deleteBookCategory = async (req: express.Request, res: express.Resp
     return res.sendStatus(200);
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: error.message }).end();
   }
 }
 
@@ -215,16 +218,16 @@ export const addRecord = async (req: express.Request, res: express.Response) => 
       return res.status(404).json({ error: 'Book does not exist' }).end();
     }
 
-    const { category_id, date, amount, remark} = req.body;
+    const { categoryId, date, amount, remark} = req.body;
 
-    // Check if category_id exists in book
-    const categoryExists = book.categories.some((category: any) => category._id.toString() === category_id);
+    // Check if categoryId exists in book
+    const categoryExists = book.categories.some((category: any) => category._id.toString() === categoryId);
     if (!categoryExists) {
       return res.status(400).json({ error: 'Category does not exist in book' }).end();
     }
 
     book.records.push({
-      category_id,
+      categoryId,
       date,
       amount,
       remark,
@@ -235,7 +238,7 @@ export const addRecord = async (req: express.Request, res: express.Response) => 
     return res.sendStatus(200);
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: error.message }).end();
   }
 }
 
@@ -262,8 +265,8 @@ export const updateRecord = async (req: express.Request, res: express.Response) 
 
     for (const key in req.body) {
 
-      if (key === 'category_id') {
-        const categoryExists = book.categories.some((category: any) => category._id.toString() === req.body.category_id);
+      if (key === 'categoryId') {
+        const categoryExists = book.categories.some((category: any) => category._id.toString() === req.body.categoryId);
         if (!categoryExists) {
           return res.status(400).json({ error: 'Category does not exist in book' }).end();
         }
@@ -279,7 +282,7 @@ export const updateRecord = async (req: express.Request, res: express.Response) 
     return res.sendStatus(200);
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: error.message }).end();
   }
 }
 
@@ -311,6 +314,6 @@ export const deleteRecord = async (req: express.Request, res: express.Response) 
     return res.sendStatus(200);
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: error.message }).end();
   }
 }

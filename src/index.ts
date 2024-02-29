@@ -42,6 +42,13 @@ mongoose.connect(MONGODB_URL)
     console.log('MongoDB Error: ', error);
   });
 
+mongoose.set('toJSON', {
+  virtuals: true,
+  transform: (doc, converted) => {
+    delete converted._id;
+  }
+});
+
 server.on('error', (error: any) => {
   console.log('Error: ', error);
 });

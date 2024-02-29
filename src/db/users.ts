@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema({
       required: false,
     },
   },
-  default_categories: { type: [CategorySchema], required: true },
+  defaultCategories: { type: [CategorySchema], required: true },
   books: { type: [BookSchema], default: [] },
 });
 

@@ -16,28 +16,27 @@ const generateToken = () => {
 
 export const register = async (req: express.Request, res: express.Response) => {
   try {
-    console.log(req.body);
     const { email, password, username } = req.body;
 
     // Check if email, password, and username are provided
     if (!email || !password || !username) {
-      return res.sendStatus(400);
+      return res.status(400).json({ error: 'Email, password, and username are required.' }).end();
     }
 
     const existingUser = await getUserByEmail(email);
     
     // Check if user with same email already exists
     if (existingUser) {
-      return res.status(400).json({ error: 'User with this email already exists' }).end();
+      return res.status(400).json({ error: 'User with this email already exists.' }).end();
     }
 
     if (!meetPasswordRequirements(password)) {
-      return res.status(400).json({ error: 'Password does not meet requirements' }).end();
+      return res.status(400).json({ error: 'Password does not meet requirements.' }).end();
     }
 
     bycrypt.hash(password, SALT_ROUNDS, async (err: Error, hash: string) => {
       if (err) {
-        return res.sendStatus(400);
+        return res.status(400).json({ error: err.message }).end();
       }
 
       const categories = await getCategories();
@@ -48,14 +47,14 @@ export const register = async (req: express.Request, res: express.Response) => {
         authentication: {
           password: hash,
         },
-        default_categories: categories,
+        defaultCategories: categories,
       });
 
       return res.sendStatus(200);
     });
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: error.message }).end();
   }
 }
 
@@ -65,23 +64,23 @@ export const login = async (req: express.Request, res: express.Response) => {
 
     // Check if email and password are provided
     if (!email || !password) {
-      return res.sendStatus(400);
+      return res.status(400).json({ error: 'Email and password are required.' }).end();
     }
 
     const user = await getUserByEmail(email).select('+authentication.password +authentication.tokens');
 
     // Check if user with email exists
     if (!user) {
-      return res.status(400).json({ error: 'User with this email does not exist' }).end();
+      return res.status(400).json({ error: 'User with this email does not exist.' }).end();
     }
 
     bycrypt.compare(password, user.authentication.password as string, async (err: Error, result: boolean) => {
       if (err) {
-        return res.sendStatus(400);
+        return res.status(400).json({ error: err.message }).end();
       }
 
       if (!result) {
-        return res.status(400).json({ error: 'Password is incorrect' }).end();
+        return res.status(400).json({ error: 'Password is incorrect.' }).end();
       }
 
       // Generate session token
@@ -104,6 +103,6 @@ export const login = async (req: express.Request, res: express.Response) => {
     });
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.status(400).json({ error: error.message }).end();
   }
 }
