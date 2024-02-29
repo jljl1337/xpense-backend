@@ -54,7 +54,7 @@ export const updateUserInfo = async (req: express.Request, res: express.Response
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -99,7 +99,7 @@ export const updateUserPassword = async (req: express.Request, res: express.Resp
 
         await user.save();
 
-        return res.status(200).json(user).end();
+        return res.sendStatus(200);
       });
     });
   } catch (error) {
@@ -127,13 +127,14 @@ export const addUserCategory = async (req: express.Request, res: express.Respons
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
   }
 }
 
+// TODO: can removed?
 export const getUserCategories = async (req: express.Request, res: express.Response) => {
   try {
     const { userId } = req.params;
@@ -171,7 +172,7 @@ export const updateUserCategory = async (req: express.Request, res: express.Resp
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -197,7 +198,7 @@ export const deleteUserCategory = async (req: express.Request, res: express.Resp
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);

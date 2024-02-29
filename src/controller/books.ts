@@ -28,7 +28,7 @@ export const addBook = async (req: express.Request, res: express.Response) => {
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -75,7 +75,7 @@ export const updateBook = async (req: express.Request, res: express.Response) =>
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -101,7 +101,7 @@ export const deleteBook = async (req: express.Request, res: express.Response) =>
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -132,7 +132,7 @@ export const addBookCategory = async (req: express.Request, res: express.Respons
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -163,7 +163,7 @@ export const updateBookCategory = async (req: express.Request, res: express.Resp
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -193,7 +193,7 @@ export const deleteBookCategory = async (req: express.Request, res: express.Resp
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -232,7 +232,7 @@ export const addRecord = async (req: express.Request, res: express.Response) => 
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -276,7 +276,7 @@ export const updateRecord = async (req: express.Request, res: express.Response) 
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
@@ -308,7 +308,7 @@ export const deleteRecord = async (req: express.Request, res: express.Response) 
 
     await user.save();
 
-    return res.status(200).json(user).end();
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
