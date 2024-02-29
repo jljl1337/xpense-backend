@@ -6,7 +6,7 @@ import { getCategories } from '../db/books';
 import { createUser, getUserByEmail } from '../db/users';
 import { meetPasswordRequirements } from '../helper';
 
-const SALT_ROUNDS = process.env.SALT_ROUNDS;
+const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
 const MAX_TOKENS = Number(process.env.MAX_TOKENS);
 const COOKIE_KEY = process.env.COOKIE_KEY;
 
@@ -42,7 +42,7 @@ export const register = async (req: express.Request, res: express.Response) => {
 
       const categories = await getCategories();
 
-      const user = await createUser({
+      createUser({
         email,
         username,
         authentication: {
@@ -51,7 +51,7 @@ export const register = async (req: express.Request, res: express.Response) => {
         default_categories: categories,
       });
 
-      return res.status(200).json(user).end();
+      return res.sendStatus(200);
     });
   } catch (error) {
     console.log(error);
@@ -100,7 +100,7 @@ export const login = async (req: express.Request, res: express.Response) => {
 
       res.cookie(COOKIE_KEY, token, {httpOnly: true});
 
-      return res.status(200).json(user).end();
+      return res.status(200).json({ userId: user._id });
     });
   } catch (error) {
     console.log(error);
