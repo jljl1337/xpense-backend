@@ -173,7 +173,7 @@ export const updateBookCategory = async (req: express.Request, res: express.Resp
 export const deleteBookCategory = async (req: express.Request, res: express.Response) => {
   try {
     const { userId, bookId, categoryId } = req.params;
-    const user = await getUserById(userId);
+    const user = await getUserById(userId).select('+books.records');
 
     if (!user) {
       return res.status(404).json({ error: 'User does not exist' }).end();
@@ -191,6 +191,9 @@ export const deleteBookCategory = async (req: express.Request, res: express.Resp
 
     // Check if category is used in any record
     const categoryUsed = book.records.some((record: { categoryId: string }) => record.categoryId === categoryId);
+    if (categoryUsed) {
+      return res.status(400).json({ error: 'Category is used in records' }).end();
+    }
 
     book.categories.splice(categoryIndex, 1);
 
