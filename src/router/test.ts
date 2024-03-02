@@ -4,7 +4,7 @@ import express from 'express';
 
 export default (router: express.Router): void => {
   router.get('/test/users', (req, res) => {
-    getUsers().select('+authentication.password +authentication.tokens').then((users) => {
+    getUsers().select('+authentication.tokens +books.records').then((users) => {
       res.status(200).json(users).end();
     }).catch((error) => {
       console.log(error);
