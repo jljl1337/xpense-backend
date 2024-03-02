@@ -71,6 +71,12 @@ export const updateBook = async (req: express.Request, res: express.Response) =>
       return res.status(404).json({ error: 'Book does not exist' }).end();
     }
 
+    // check if book with new title already exists
+    const bookExists = user.books.some((book: { title: string }) => book.title === newTitle);
+    if (bookExists) {
+      return res.status(400).json({ error: 'Book with this title already exists' }).end();
+    }
+
     book.title = newTitle;
 
     await user.save();
@@ -85,7 +91,7 @@ export const updateBook = async (req: express.Request, res: express.Response) =>
 export const deleteBook = async (req: express.Request, res: express.Response) => {
   try {
     const { userId, bookId } = req.params;
-    const user = await getUserById(userId);
+    const user = await getUserById(userId).select('+books.records');
 
     if (!user) {
       return res.status(404).json({ error: 'User does not exist' }).end();
