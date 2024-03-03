@@ -199,6 +199,10 @@ export const deleteUserCategory = async (req: express.Request, res: express.Resp
       return res.status(400).json({ error: 'Category does not exist.' }).end();
     }
 
+    if (user.defaultCategories.length === 1) {
+      return res.status(400).json({ error: 'You must have at least one default category.' }).end();
+    }
+
     user.defaultCategories.splice(categoryIndex, 1);
 
     await user.save();

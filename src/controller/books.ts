@@ -200,6 +200,10 @@ export const deleteBookCategory = async (req: express.Request, res: express.Resp
       return res.status(404).json({ error: 'Category does not exist.' }).end();
     }
 
+    if (book.categories.length === 1) {
+      return res.status(400).json({ error: 'Book must have at least one category.' }).end();
+    }
+
     // Check if category is used in any record
     const categoryUsed = book.records.some((record: { categoryId: string }) => record.categoryId === categoryId);
     if (categoryUsed) {
