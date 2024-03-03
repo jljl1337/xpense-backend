@@ -1,10 +1,19 @@
 import { getCategories } from '../db/books';
-import { getUsers } from '../db/users';
+import { getUserById, getUsers } from '../db/users';
 import express from 'express';
 
 export default (router: express.Router): void => {
   router.get('/test/users', (req, res) => {
-    getUsers().select('+authentication.tokens +books.records').then((users) => {
+    getUsers().select('+books.records').then((users) => {
+      res.status(200).json(users).end();
+    }).catch((error) => {
+      console.log(error);
+      res.status(400).json({ error: error.message }).end();
+    });
+  });
+  router.get('/test/users/:userId', (req, res) => {
+    const {userId} = req.params;
+    getUserById(userId).select('+books.records +books.categories').then((users) => {
       res.status(200).json(users).end();
     }).catch((error) => {
       console.log(error);
