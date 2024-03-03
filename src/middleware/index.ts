@@ -11,13 +11,13 @@ export const isAuthenticated = async (req: express.Request, res: express.Respons
 
     // Check if token exists
     if (!token) {
-      return res.sendStatus(403);
+      return res.status(401).json({ error: 'Please login again.'});
     }
 
     // Check if user exists
     const user = await getUserById(userId).select('+authentication.tokens');
     if (!user) {
-      return res.sendStatus(403);
+      return res.status(401).json({ error: 'Please login again.'});
     }
 
     // Check if token exists in user's tokens, and update lastUsed if it does
@@ -32,7 +32,7 @@ export const isAuthenticated = async (req: express.Request, res: express.Respons
     });
 
     if (!tokenExists) {
-      return res.sendStatus(403);
+      return res.status(401).json({ error: 'Please login again.'});
     }
 
     return next();

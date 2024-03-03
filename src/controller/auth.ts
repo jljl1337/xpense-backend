@@ -3,7 +3,7 @@ import bycrypt from 'bcrypt';
 import crypto from 'crypto';
 
 import { getCategories } from '../db/books';
-import { createUser, getUserByEmail } from '../db/users';
+import { createUser, getUserByEmail, getUserById } from '../db/users';
 import { meetPasswordRequirements } from '../helper';
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
@@ -101,6 +101,17 @@ export const login = async (req: express.Request, res: express.Response) => {
 
       return res.status(200).json({ userId: user._id });
     });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ error: error.message }).end();
+  }
+}
+
+// Placeholder for verifying user session
+export const verify = async (req: express.Request, res: express.Response) => {
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.status(400).json({ error: error.message }).end();
