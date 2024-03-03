@@ -110,19 +110,20 @@ export const updateUserPassword = async (req: express.Request, res: express.Resp
 export const addUserCategory = async (req: express.Request, res: express.Response) => {
   try {
     const { userId } = req.params;
-    const { category } = req.body;
+    const { name } = req.body;
     const user = await getUserById(userId);
 
     if (!user) {
       return res.status(404).json({ error: 'User does not exist.' }).end();
     }
 
-    const categoryExist = user.books.some((categoryObject: { name: string }) => categoryObject.name === category);
+    const categoryExist = user.defaultCategories.some((categoryObject: { name: string }) => categoryObject.name === name);
     if (categoryExist) {
       return res.status(400).json({ error: 'Category already exists.' }).end();
     }
 
-    user.defaultCategories.push({ name: category });
+    user.defaultCategories.push({ name });
+    console.log(user.defaultCategories);
 
     await user.save();
 
@@ -153,7 +154,7 @@ export const getUserCategories = async (req: express.Request, res: express.Respo
 export const updateUserCategory = async (req: express.Request, res: express.Response) => {
   try {
     const { userId, categoryId } = req.params;
-    const { newCategory } = req.body;
+    const { newName } = req.body;
 
     const user = await getUserById(userId);
 
@@ -167,7 +168,12 @@ export const updateUserCategory = async (req: express.Request, res: express.Resp
       return res.status(400).json({ error: 'Category does not exist.' }).end();
     }
 
-    user.defaultCategories[categoryIndex].name = newCategory;
+    const categoryExists = user.defaultCategories.some((category: any) => category.name === newName && category._id.toString() !== categoryId);
+    if (categoryExists) {
+      return res.status(400).json({ error: 'Category with this name already exists in this book.' }).end();
+    }
+
+    user.defaultCategories[categoryIndex].name = newName;
 
     await user.save();
 

@@ -13,7 +13,7 @@ const RecordSchema = new mongoose.Schema({
 
 export const BookSchema = new mongoose.Schema({
     title: { type: String, required: true },
-    categories: { type: [CategorySchema], required: true },
+    categories: { type: [CategorySchema], required: true, select: false },
     records: { type: [RecordSchema], default: [], select: false},
 });
 

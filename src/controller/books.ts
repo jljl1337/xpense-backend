@@ -38,7 +38,7 @@ export const addBook = async (req: express.Request, res: express.Response) => {
 export const getBook = async (req: express.Request, res: express.Response) => {
   try {
     const { userId, bookId } = req.params;
-    const user = await getUserById(userId).select('+books.records');
+    const user = await getUserById(userId).select('+books.records +books.categories');
 
     if (!user) {
       return res.status(404).json({ error: 'User does not exist.' }).end();
@@ -72,7 +72,7 @@ export const updateBook = async (req: express.Request, res: express.Response) =>
     }
 
     // check if book with new title already exists
-    const bookExists = user.books.some((book: { title: string }) => book.title === newTitle);
+    const bookExists = user.books.some((book: { title: string, _id: ObjectId }) => book.title === newTitle && book._id.toString() !== bookId);
     if (bookExists) {
       return res.status(400).json({ error: 'Book with this title already exists.' }).end();
     }
@@ -118,7 +118,7 @@ export const addBookCategory = async (req: express.Request, res: express.Respons
   try {
     const { userId, bookId } = req.params;
     const { name } = req.body;
-    const user = await getUserById(userId);
+    const user = await getUserById(userId).select('+books.categories');
 
     if (!user) {
       return res.status(404).json({ error: 'User does not exist.' }).end();
@@ -149,7 +149,7 @@ export const updateBookCategory = async (req: express.Request, res: express.Resp
   try {
     const { userId, bookId, categoryId } = req.params;
     const { newName } = req.body;
-    const user = await getUserById(userId);
+    const user = await getUserById(userId).select('+books.categories');
 
     if (!user) {
       return res.status(404).json({ error: 'User does not exist.' }).end();
@@ -163,6 +163,11 @@ export const updateBookCategory = async (req: express.Request, res: express.Resp
     const categoryIndex = book.categories.findIndex((category: { _id: ObjectId }) => category._id.toString() === categoryId);
     if (categoryIndex === -1) {
       return res.status(404).json({ error: 'Category does not exist.' }).end();
+    }
+
+    const categoryExists = book.categories.some((category: any) => category.name === newName && category._id.toString() !== categoryId);
+    if (categoryExists) {
+      return res.status(400).json({ error: 'Category with this name already exists in this book.' }).end();
     }
 
     book.categories[categoryIndex].name = newName;
@@ -179,7 +184,7 @@ export const updateBookCategory = async (req: express.Request, res: express.Resp
 export const deleteBookCategory = async (req: express.Request, res: express.Response) => {
   try {
     const { userId, bookId, categoryId } = req.params;
-    const user = await getUserById(userId).select('+books.records');
+    const user = await getUserById(userId).select('+books.records +books.categories');
 
     if (!user) {
       return res.status(404).json({ error: 'User does not exist.' }).end();
@@ -215,7 +220,7 @@ export const deleteBookCategory = async (req: express.Request, res: express.Resp
 export const addRecord = async (req: express.Request, res: express.Response) => {
   try {
     const { userId, bookId } = req.params;
-    const user = await getUserById(userId).select('+books.records');
+    const user = await getUserById(userId).select('+books.records +books.categories');
 
     if (!user) {
       return res.status(404).json({ error: 'User does not exist.' }).end();
@@ -254,7 +259,7 @@ export const addRecord = async (req: express.Request, res: express.Response) => 
 export const updateRecord = async (req: express.Request, res: express.Response) => {
   try {
     const { userId, bookId, recordId } = req.params;
-    const user = await getUserById(userId).select('+books.records');
+    const user = await getUserById(userId).select('+books.records +books.categories');
 
     if (!user) {
       return res.status(404).json({ error: 'User does not exist.' }).end();
