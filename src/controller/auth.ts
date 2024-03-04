@@ -110,7 +110,7 @@ export const login = async (req: express.Request, res: express.Response) => {
 // Placeholder for verifying user session
 export const verify = async (req: express.Request, res: express.Response) => {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    // await new Promise((resolve) => setTimeout(resolve, 5000));
     res.sendStatus(200);
   } catch (error) {
     console.log(error);
