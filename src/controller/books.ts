@@ -91,7 +91,7 @@ export const updateBook = async (req: express.Request, res: express.Response) =>
 export const deleteBook = async (req: express.Request, res: express.Response) => {
   try {
     const { userId, bookId } = req.params;
-    const user = await getUserById(userId).select('+books.records');
+    const user = await getUserById(userId).select('+books.records +books.categories');
 
     if (!user) {
       return res.status(404).json({ error: 'User does not exist.' }).end();
