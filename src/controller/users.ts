@@ -6,6 +6,7 @@ import { meetPasswordRequirements } from '../helper';
 import { ObjectId } from 'mongoose';
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
+const COOKIE_KEY = process.env.COOKIE_KEY;
 
 export const getUser = async (req: express.Request, res: express.Response) => {
   try {
@@ -93,8 +94,8 @@ export const updateUserPassword = async (req: express.Request, res: express.Resp
 
         user.authentication.password = hash;
 
-        // Remove all tokens
-        user.authentication.tokens = [];
+        // Remove all tokens except the current one
+        user.authentication.tokens = user.authentication.tokens.filter((t: { token: string, lastUsed: Date }) => t.token === req.cookies[COOKIE_KEY]);
 
         await user.save();
 
