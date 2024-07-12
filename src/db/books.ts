@@ -9,6 +9,7 @@ const RecordSchema = new mongoose.Schema({
     date: { type: Date, required: true },
     amount: { type: Number, required: true },
     remark: { type: String },
+    createDate: { type: Date, required: true },
 });
 
 export const BookSchema = new mongoose.Schema({
