@@ -1,0 +1,36 @@
+version: '1.0'
+
+services:   
+
+  mongo-service:    
+    container_name: mongo
+    hostname: mongo
+    image: mongo:latest
+    volumes:
+      - /data/mongo/db:/data/db
+      - /data/mongo/conf:/data/configdb
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ""
+      MONGO_INITDB_ROOT_PASSWORD: ""
+    ports:
+      - "27017:27017"
+    restart: always
+
+  api-service:
+    container_name: xpense-api
+    hostname: xpense-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mongo-service
+    environment:
+      MONGODB_URL: ""
+      PORT: 53888
+      COOKIE_KEY: XPENSE_COOKIE
+      SALT_ROUNDS: 10
+      MAX_TOKENS: 5
+    ports:
+      - "53888:53888"
+    restart: always

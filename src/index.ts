@@ -1,6 +1,5 @@
 import express from 'express';
-import https from 'https';
-import fs from 'fs';
+import http from 'http';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
@@ -10,10 +9,6 @@ import mongoose from 'mongoose';
 import router from './router';
 
 const PORT = Number(process.env.PORT);
-const KEY_PATH = process.env.KEY_PATH;
-const CERT_PATH = process.env.CERT_PATH;
-const SERVICE_NAME = process.env.SERVICE_NAME;
-const VERSION = process.env.VERSION;
 
 const app = express();
 
@@ -22,11 +17,7 @@ app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-const privateKey = fs.readFileSync(KEY_PATH, 'utf8');
-const certificate = fs.readFileSync(CERT_PATH, 'utf8');
-
-// Create an HTTPS service with the certificate and private key.
-const server = https.createServer({ key: privateKey, cert: certificate }, app);
+const server = http.createServer(app);
 
 server.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
@@ -54,4 +45,4 @@ server.on('error', (error: any) => {
   console.log('Error: ', error);
 });
 
-app.use(`/${SERVICE_NAME}/v${VERSION}`, router());
+app.use('/', router());
