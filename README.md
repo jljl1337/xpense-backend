@@ -7,5 +7,9 @@
 
 ## Commands
 
-`docker compose up -d` - Start the backend server
+`docker compose up -d --build` - Start the backend server
 `docker compose down` - Stop the backend server
+
+## TODO
+
+1. Update model to properly support typescript

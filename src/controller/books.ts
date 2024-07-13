@@ -236,7 +236,7 @@ export const addRecord = async (req: express.Request, res: express.Response) => 
       return res.status(404).json({ error: 'Book does not exist.' }).end();
     }
 
-    const { categoryId, date, amount, remark} = req.body;
+    const { categoryId, date, amount, remark, createDate } = req.body;
 
     // Check if categoryId exists in book
     const categoryExists = book.categories.some((category: any) => category._id.toString() === categoryId);
@@ -249,6 +249,7 @@ export const addRecord = async (req: express.Request, res: express.Response) => 
       date,
       amount,
       remark,
+      createDate
     });
 
     await user.save();
