@@ -5,11 +5,15 @@ LANGUAGE plpgsql
 SET search_path TO ''
 AS $$
 BEGIN
+    -- Continue only if category is being deleted
+    IF NEW.is_active OR NOT OLD.is_active THEN
+        RETURN NEW;
+    END IF;
+
     IF EXISTS (
         SELECT 1
         FROM public.record AS r
         WHERE
-            r.user_id = auth.uid() AND
             r.category_id = NEW.id AND
             r.is_active = TRUE
     ) THEN
@@ -32,11 +36,15 @@ LANGUAGE plpgsql
 SET search_path TO ''
 AS $$
 BEGIN
+    -- Continue only if payment method is being deleted
+    IF NEW.is_active OR NOT OLD.is_active THEN
+        RETURN NEW;
+    END IF;
+
     IF EXISTS (
         SELECT 1
         FROM public.record AS r
         WHERE
-            r.user_id = auth.uid() AND
             r.payment_method_id = NEW.id AND
             r.is_active = TRUE
     ) THEN
@@ -111,10 +119,9 @@ BEGIN
         WHERE
             c.id = NEW.category_id AND
             c.book_id = NEW.book_id AND
-            c.user_id = NEW.user_id AND
             c.is_active = TRUE
     ) THEN
-        RAISE EXCEPTION 'Category does not belong to the same book';
+        RAISE EXCEPTION 'Category does not exist in the book';
     END IF;
     RETURN NEW;
 END;
@@ -137,10 +144,9 @@ BEGIN
         WHERE
             pm.id = NEW.payment_method_id AND
             pm.book_id = NEW.book_id AND
-            pm.user_id = NEW.user_id AND
             pm.is_active = TRUE
     ) THEN
-        RAISE EXCEPTION 'Payment method does not belong to the same book';
+        RAISE EXCEPTION 'Payment method does not exist in the book';
     END IF;
     RETURN NEW;
 END;
