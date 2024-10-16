@@ -68,17 +68,6 @@ AS $$
 DECLARE
     delete_book_id uuid;
 BEGIN
-    -- Get book_id
-    SELECT
-        c.book_id
-    INTO
-        delete_book_id
-    FROM
-        public.category AS c
-    WHERE
-        c.user_id = auth.uid() AND
-        c.id = delete_category.id;
-
     -- Delete category by deactivating it
     UPDATE
         public.category AS c

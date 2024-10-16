@@ -68,17 +68,6 @@ AS $$
 DECLARE
     delete_book_id uuid;
 BEGIN
-    -- Get book_id
-    SELECT
-        pm.book_id
-    INTO
-        delete_book_id
-    FROM
-        public.payment_method AS pm
-    WHERE
-        pm.user_id = auth.uid() AND
-        pm.id = delete_payment_method.id;
-
     -- Delete payment method by deactivating it
     UPDATE
         public.payment_method AS pm
