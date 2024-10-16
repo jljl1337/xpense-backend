@@ -93,6 +93,7 @@ CREATE TABLE record (
     user_id uuid NOT NULL REFERENCES auth.users(id),
     book_id uuid NOT NULL REFERENCES book(id),
     category_id uuid NOT NULL REFERENCES category(id),
+    payment_method_id uuid NOT NULL REFERENCES payment_method(id),
     created_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL,
     is_active boolean NOT NULL DEFAULT TRUE,
