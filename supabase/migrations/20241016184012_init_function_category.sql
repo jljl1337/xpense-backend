@@ -15,7 +15,7 @@ END;
 $$;
 
 -- Get category function
-CREATE OR REPLACE FUNCTION get_category(
+CREATE OR REPLACE FUNCTION get_categories(
     book_id uuid DEFAULT NULL
 )
 RETURNS SETOF category
@@ -30,7 +30,7 @@ BEGIN
         public.category AS c
     WHERE
         c.user_id = auth.uid() AND
-        COALESCE(c.book_id::text, '') = COALESCE(get_category.book_id::text, '') AND
+        COALESCE(c.book_id::text, '') = COALESCE(get_categories.book_id::text, '') AND
         c.is_active = TRUE;
 END;
 $$;

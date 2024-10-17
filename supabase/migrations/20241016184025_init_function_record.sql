@@ -18,7 +18,7 @@ END;
 $$;
 
 -- Get record function
-CREATE OR REPLACE FUNCTION get_record(
+CREATE OR REPLACE FUNCTION get_records(
     book_id uuid
 )
 RETURNS SETOF record
@@ -33,7 +33,7 @@ BEGIN
         public.record AS r
     WHERE
         r.user_id = auth.uid() AND
-        r.book_id = get_record.book_id AND
+        r.book_id = get_records.book_id AND
         r.is_active = TRUE;
 END;
 $$;

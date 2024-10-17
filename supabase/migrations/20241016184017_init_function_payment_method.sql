@@ -15,7 +15,7 @@ END;
 $$;
 
 -- Get payment method function
-CREATE OR REPLACE FUNCTION get_payment_method(
+CREATE OR REPLACE FUNCTION get_payment_methods(
     book_id uuid DEFAULT NULL
 )
 RETURNS SETOF payment_method
@@ -30,7 +30,7 @@ BEGIN
         public.payment_method AS pm
     WHERE
         pm.user_id = auth.uid() AND
-        COALESCE(pm.book_id::text, '') = COALESCE(get_payment_method.book_id::text, '') AND
+        COALESCE(pm.book_id::text, '') = COALESCE(get_payment_methods.book_id::text, '') AND
         pm.is_active = TRUE;
 END;
 $$;

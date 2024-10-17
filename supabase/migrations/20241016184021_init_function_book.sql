@@ -15,7 +15,7 @@ END;
 $$;
 
 -- Get book function
-CREATE OR REPLACE FUNCTION get_book()
+CREATE OR REPLACE FUNCTION get_books()
 RETURNS SETOF book
 LANGUAGE plpgsql
 SET search_path TO ''
