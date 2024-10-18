@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION create_record(
     category_id uuid,
     payment_method_id uuid,
     amount numeric,
-    note text,
+    remark text,
     date date
 )
 RETURNS void
@@ -12,8 +12,8 @@ LANGUAGE plpgsql
 SET search_path TO ''
 AS $$
 BEGIN
-    INSERT INTO public.record (user_id, book_id, category_id, payment_method_id, amount, note, date)
-    VALUES (auth.uid(), book_id, category_id, payment_method_id, amount, note, date);
+    INSERT INTO public.record (user_id, book_id, category_id, payment_method_id, amount, remark, date)
+    VALUES (auth.uid(), book_id, category_id, payment_method_id, amount, remark, date);
 END;
 $$;
 
@@ -44,7 +44,7 @@ CREATE OR REPLACE FUNCTION update_record(
     category_id uuid,
     payment_method_id uuid,
     amount numeric,
-    note text,
+    remark text,
     date date
 )
 RETURNS void
@@ -58,7 +58,7 @@ BEGIN
         category_id = category_id,
         payment_method_id = payment_method_id,
         amount = amount,
-        note = note,
+        remark = remark,
         date = date
     WHERE
         r.user_id = auth.uid() AND
