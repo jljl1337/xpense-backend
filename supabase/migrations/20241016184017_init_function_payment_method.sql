@@ -49,8 +49,9 @@ BEGIN
     UPDATE
         public.payment_method AS pm
     SET
-        name = name,
-        description = description
+        name = update_payment_method.name,
+        description = update_payment_method.description,
+        updated_at = NOW()
     WHERE
         pm.user_id = auth.uid() AND
         pm.id = update_payment_method.id;
@@ -72,7 +73,8 @@ BEGIN
     UPDATE
         public.payment_method AS pm
     SET
-        is_active = FALSE
+        is_active = FALSE,
+        updated_at = NOW()
     WHERE
         pm.user_id = auth.uid() AND
         pm.id = delete_payment_method.id;

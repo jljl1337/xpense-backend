@@ -46,8 +46,9 @@ BEGIN
     UPDATE
         public.book AS b
     SET
-        name = name,
-        description = description
+        name = update_book.name,
+        description = update_book.description,
+        updated_at = NOW()
     WHERE
         b.user_id = auth.uid() AND
         b.id = update_book.id;
@@ -67,7 +68,8 @@ BEGIN
     UPDATE
         public.book AS b
     SET
-        is_active = FALSE
+        is_active = FALSE,
+        updated_at = NOW()
     WHERE
         b.user_id = auth.uid() AND
         b.id = delete_book.id;

@@ -5,6 +5,7 @@
   "scripts": {
     "start": "supabase start",
     "stop": "supabase stop",
+    "status": "supabase status",
     "reset": "supabase db reset"
   },
   "devDependencies": {

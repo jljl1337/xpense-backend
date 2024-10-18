@@ -49,8 +49,9 @@ BEGIN
     UPDATE
         public.category AS c
     SET
-        name = name,
-        description = description
+        name = update_category.name,
+        description = update_category.description,
+        updated_at = NOW()
     WHERE
         c.user_id = auth.uid() AND
         c.id = update_category.id;
@@ -72,7 +73,8 @@ BEGIN
     UPDATE
         public.category AS c
     SET
-        is_active = FALSE
+        is_active = FALSE,
+        updated_at = NOW()
     WHERE
         c.user_id = auth.uid() AND
         c.id = delete_category.id;

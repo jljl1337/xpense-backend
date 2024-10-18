@@ -55,11 +55,12 @@ BEGIN
     UPDATE
         public.record AS r
     SET
-        category_id = category_id,
-        payment_method_id = payment_method_id,
-        amount = amount,
-        remark = remark,
-        date = date
+        category_id = update_record.category_id,
+        payment_method_id = update_record.payment_method_id,
+        amount = update_record.amount,
+        remark = update_record.remark,
+        date = update_record.date,
+        updated_at = NOW()
     WHERE
         r.user_id = auth.uid() AND
         r.id = update_record.id;
@@ -79,7 +80,8 @@ BEGIN
     UPDATE
         public.record AS r
     SET
-        is_active = FALSE
+        is_active = FALSE,
+        updated_at = NOW()
     WHERE
         r.user_id = auth.uid() AND
         r.id = delete_record.id;
