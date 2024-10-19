@@ -1,5 +1,5 @@
--- Check if any record is using this category
-CREATE OR REPLACE FUNCTION check_record_using_category()
+-- Check if any expense is using this category
+CREATE OR REPLACE FUNCTION check_expense_using_category()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SET search_path TO ''
@@ -12,25 +12,25 @@ BEGIN
 
     IF EXISTS (
         SELECT 1
-        FROM public.record AS r
+        FROM public.expense AS e
         WHERE
-            r.category_id = NEW.id AND
-            r.is_active = TRUE
+            e.category_id = NEW.id AND
+            e.is_active = TRUE
     ) THEN
-        RAISE EXCEPTION 'Cannot delete category because it is being used by at least one record';
+        RAISE EXCEPTION 'Cannot delete category because it is being used by at least one expense';
     END IF;
 
     RETURN NEW;
 END;
 $$;
 
-CREATE TRIGGER enforce_record_using_category
+CREATE TRIGGER enforce_expense_using_category
 BEFORE UPDATE ON public.category
 FOR EACH ROW
-EXECUTE FUNCTION check_record_using_category();
+EXECUTE FUNCTION check_expense_using_category();
 
--- Check if any record is using this payment method
-CREATE OR REPLACE FUNCTION check_record_using_payment_method()
+-- Check if any expense is using this payment method
+CREATE OR REPLACE FUNCTION check_expense_using_payment_method()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SET search_path TO ''
@@ -43,22 +43,22 @@ BEGIN
 
     IF EXISTS (
         SELECT 1
-        FROM public.record AS r
+        FROM public.expense AS e
         WHERE
-            r.payment_method_id = NEW.id AND
-            r.is_active = TRUE
+            e.payment_method_id = NEW.id AND
+            e.is_active = TRUE
     ) THEN
-        RAISE EXCEPTION 'Cannot delete payment method because it is being used by at least one record';
+        RAISE EXCEPTION 'Cannot delete payment method because it is being used by at least one expense';
     END IF;
 
     RETURN NEW;
 END;
 $$;
 
-CREATE TRIGGER enforce_record_using_payment_method
+CREATE TRIGGER enforce_expense_using_payment_method
 BEFORE UPDATE ON public.payment_method
 FOR EACH ROW
-EXECUTE FUNCTION check_record_using_payment_method();
+EXECUTE FUNCTION check_expense_using_payment_method();
 
 -- Create book trigger
 CREATE OR REPLACE FUNCTION public.book_default_category_payment_method()
@@ -106,7 +106,7 @@ AFTER INSERT ON public.book
 FOR EACH ROW
 EXECUTE FUNCTION public.book_default_category_payment_method();
 
--- Record table triggers
+-- Expense table triggers
 CREATE OR REPLACE FUNCTION check_category_same_book()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -128,7 +128,7 @@ END;
 $$;
 
 CREATE TRIGGER enforce_category_same_book
-BEFORE INSERT OR UPDATE ON public.record
+BEFORE INSERT OR UPDATE ON public.expense
 FOR EACH ROW
 EXECUTE FUNCTION check_category_same_book();
 
@@ -153,6 +153,6 @@ END;
 $$;
 
 CREATE TRIGGER enforce_payment_method_same_book
-BEFORE INSERT OR UPDATE ON public.record
+BEFORE INSERT OR UPDATE ON public.expense
 FOR EACH ROW
 EXECUTE FUNCTION check_payment_method_same_book();

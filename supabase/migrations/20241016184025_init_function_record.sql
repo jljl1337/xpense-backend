@@ -1,5 +1,5 @@
--- Create record function
-CREATE OR REPLACE FUNCTION create_record(
+-- Create expense function
+CREATE OR REPLACE FUNCTION create_expense(
     book_id uuid,
     category_id uuid,
     payment_method_id uuid,
@@ -12,16 +12,16 @@ LANGUAGE plpgsql
 SET search_path TO ''
 AS $$
 BEGIN
-    INSERT INTO public.record (user_id, book_id, category_id, payment_method_id, amount, remark, date)
+    INSERT INTO public.expense (user_id, book_id, category_id, payment_method_id, amount, remark, date)
     VALUES (auth.uid(), book_id, category_id, payment_method_id, amount, remark, date);
 END;
 $$;
 
--- Get record function
-CREATE OR REPLACE FUNCTION get_records(
+-- Get expense function
+CREATE OR REPLACE FUNCTION get_expenses(
     book_id uuid
 )
-RETURNS SETOF record
+RETURNS SETOF expense
 LANGUAGE plpgsql
 SET search_path TO ''
 AS $$
@@ -30,16 +30,16 @@ BEGIN
     SELECT
         *
     FROM
-        public.record AS r
+        public.expense AS e
     WHERE
-        r.user_id = auth.uid() AND
-        r.book_id = get_records.book_id AND
-        r.is_active = TRUE;
+        e.user_id = auth.uid() AND
+        e.book_id = get_expenses.book_id AND
+        e.is_active = TRUE;
 END;
 $$;
 
--- Update record function
-CREATE OR REPLACE FUNCTION update_record(
+-- Update expense function
+CREATE OR REPLACE FUNCTION update_expense(
     id uuid,
     category_id uuid,
     payment_method_id uuid,
@@ -53,22 +53,22 @@ SET search_path TO ''
 AS $$
 BEGIN
     UPDATE
-        public.record AS r
+        public.expense AS e
     SET
-        category_id = update_record.category_id,
-        payment_method_id = update_record.payment_method_id,
-        amount = update_record.amount,
-        remark = update_record.remark,
-        date = update_record.date,
+        category_id = update_expense.category_id,
+        payment_method_id = update_expense.payment_method_id,
+        amount = update_expense.amount,
+        remark = update_expense.remark,
+        date = update_expense.date,
         updated_at = NOW()
     WHERE
-        r.user_id = auth.uid() AND
-        r.id = update_record.id;
+        e.user_id = auth.uid() AND
+        e.id = update_expense.id;
 END;
 $$;
 
--- Delete record function
-CREATE OR REPLACE FUNCTION delete_record(
+-- Delete expense function
+CREATE OR REPLACE FUNCTION delete_expense(
     id uuid
 )
 RETURNS void
@@ -76,14 +76,14 @@ LANGUAGE plpgsql
 SET search_path TO ''
 AS $$
 BEGIN
-    -- Delete record by deactivating it
+    -- Delete expense by deactivating it
     UPDATE
-        public.record AS r
+        public.expense AS e
     SET
         is_active = FALSE,
         updated_at = NOW()
     WHERE
-        r.user_id = auth.uid() AND
-        r.id = delete_record.id;
+        e.user_id = auth.uid() AND
+        e.id = delete_expense.id;
 END;
 $$;

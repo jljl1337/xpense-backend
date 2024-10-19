@@ -139,7 +139,7 @@ INSERT INTO "auth"."identities" ("provider_id", "user_id", "identity_data", "pro
 
 
 --
--- Data for Name: record; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: expense; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 

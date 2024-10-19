@@ -87,8 +87,8 @@ TO authenticated
 USING ( (SELECT auth.uid()) = user_id )
 WITH CHECK ( (SELECT auth.uid()) = user_id );
 
--- Record table
-CREATE TABLE record (
+-- Expense table
+CREATE TABLE expense (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid NOT NULL REFERENCES auth.users(id),
     book_id uuid NOT NULL REFERENCES book(id),
@@ -102,20 +102,20 @@ CREATE TABLE record (
     remark text NOT NULL
 );
 
-ALTER TABLE record ENABLE ROW LEVEL SECURITY;
+ALTER TABLE expense ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "User can view their records"
-ON record FOR SELECT
+CREATE POLICY "User can view their expenses"
+ON expense FOR SELECT
 TO authenticated
 USING ( (SELECT auth.uid()) = user_id );
 
-CREATE POLICY "User can insert their records"
-ON record FOR INSERT
+CREATE POLICY "User can insert their expenses"
+ON expense FOR INSERT
 TO authenticated
 WITH CHECK ( (SELECT auth.uid()) = user_id );
 
-CREATE POLICY "User can update their records"
-ON record FOR UPDATE
+CREATE POLICY "User can update their expenses"
+ON expense FOR UPDATE
 TO authenticated
 USING ( (SELECT auth.uid()) = user_id )
 WITH CHECK ( (SELECT auth.uid()) = user_id );
