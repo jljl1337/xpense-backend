@@ -97,7 +97,7 @@ CREATE TABLE expense (
     created_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL,
     is_active boolean NOT NULL DEFAULT TRUE,
-    date date NOT NULL,
+    date timestamptz NOT NULL,
     amount numeric NOT NULL,
     remark text NOT NULL
 );

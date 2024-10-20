@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION create_expense(
     payment_method_id uuid,
     amount numeric,
     remark text,
-    date date
+    date timestamptz
 )
 RETURNS void
 LANGUAGE plpgsql
@@ -45,7 +45,7 @@ CREATE OR REPLACE FUNCTION update_expense(
     payment_method_id uuid,
     amount numeric,
     remark text,
-    date date
+    date timestamptz
 )
 RETURNS void
 LANGUAGE plpgsql
