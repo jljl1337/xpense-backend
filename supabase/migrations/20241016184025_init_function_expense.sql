@@ -12,8 +12,8 @@ LANGUAGE plpgsql
 SET search_path TO ''
 AS $$
 BEGIN
-    INSERT INTO public.expense (user_id, book_id, category_id, payment_method_id, amount, remark, date)
-    VALUES (auth.uid(), book_id, category_id, payment_method_id, amount, remark, date);
+    INSERT INTO public.expense (book_id, category_id, payment_method_id, amount, remark, date)
+    VALUES (book_id, category_id, payment_method_id, amount, remark, date);
 END;
 $$;
 
@@ -32,7 +32,6 @@ BEGIN
     FROM
         public.expense AS e
     WHERE
-        e.user_id = auth.uid() AND
         e.book_id = get_expenses.book_id AND
         e.is_active = TRUE;
 END;
@@ -62,7 +61,6 @@ BEGIN
         date = update_expense.date,
         updated_at = NOW()
     WHERE
-        e.user_id = auth.uid() AND
         e.id = update_expense.id;
 END;
 $$;
@@ -83,7 +81,6 @@ BEGIN
         is_active = FALSE,
         updated_at = NOW()
     WHERE
-        e.user_id = auth.uid() AND
         e.id = delete_expense.id;
 END;
 $$;

@@ -1,3 +1,68 @@
+CREATE OR REPLACE FUNCTION handle_insert_timestamps()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path TO ''
+AS $$
+BEGIN
+    -- Override both created_at and updated_at with the current timestamp
+    NEW.created_at = NOW();
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER book_insert_timestamps
+BEFORE INSERT ON public.book
+FOR EACH ROW
+EXECUTE FUNCTION handle_insert_timestamps();
+
+CREATE TRIGGER category_insert_timestamps
+BEFORE INSERT ON public.category
+FOR EACH ROW
+EXECUTE FUNCTION handle_insert_timestamps();
+
+CREATE TRIGGER payment_method_insert_timestamps
+BEFORE INSERT ON public.payment_method
+FOR EACH ROW
+EXECUTE FUNCTION handle_insert_timestamps();
+
+CREATE TRIGGER expense_insert_timestamps
+BEFORE INSERT ON public.expense
+FOR EACH ROW
+EXECUTE FUNCTION handle_insert_timestamps();
+
+CREATE OR REPLACE FUNCTION handle_update_timestamps()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path TO ''
+AS $$
+BEGIN
+    NEW.created_at = OLD.created_at;
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER book_update_timestamps
+BEFORE UPDATE ON public.book
+FOR EACH ROW
+EXECUTE FUNCTION handle_update_timestamps();
+
+CREATE TRIGGER category_update_timestamps
+BEFORE UPDATE ON public.category
+FOR EACH ROW
+EXECUTE FUNCTION handle_update_timestamps();
+
+CREATE TRIGGER payment_method_update_timestamps
+BEFORE UPDATE ON public.payment_method
+FOR EACH ROW
+EXECUTE FUNCTION handle_update_timestamps();
+
+CREATE TRIGGER expense_update_timestamps
+BEFORE UPDATE ON public.expense
+FOR EACH ROW
+EXECUTE FUNCTION handle_update_timestamps();
+
 -- Check if any expense is using this category
 CREATE OR REPLACE FUNCTION check_expense_using_category()
 RETURNS TRIGGER
@@ -69,9 +134,8 @@ AS $$
 BEGIN
     -- Copy default category with null book_id to new book
     INSERT INTO
-        public.category (user_id, book_id, name, description)
+        public.category (book_id, name, description)
     SELECT
-        NEW.user_id,
         NEW.id,
         c.name,
         c.description
@@ -79,14 +143,12 @@ BEGIN
         public.category AS c
     WHERE
         c.user_id = NEW.user_id AND
-        c.book_id IS NULL AND
         c.is_active = TRUE;
 
     -- Copy default payment method with null book_id to new book
     INSERT INTO
-        public.payment_method (user_id, book_id, name, description)
+        public.payment_method (book_id, name, description)
     SELECT
-        NEW.user_id,
         NEW.id,
         pm.name,
         pm.description
@@ -94,7 +156,6 @@ BEGIN
         public.payment_method AS pm
     WHERE
         pm.user_id = NEW.user_id AND
-        pm.book_id IS NULL AND
         pm.is_active = TRUE;
 
     RETURN NEW;

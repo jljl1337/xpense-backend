@@ -10,7 +10,12 @@ SET search_path TO ''
 AS $$
 BEGIN
     INSERT INTO public.category (user_id, book_id, name, description)
-    VALUES (auth.uid(), book_id, name, description);
+    VALUES (
+        CASE WHEN book_id IS NULL THEN auth.uid() ELSE NULL END,
+        book_id,
+        name,
+        description
+    );
 END;
 $$;
 
@@ -29,8 +34,10 @@ BEGIN
     FROM
         public.category AS c
     WHERE
-        c.user_id = auth.uid() AND
-        COALESCE(c.book_id::text, '') = COALESCE(get_categories.book_id::text, '') AND
+        CASE
+            WHEN get_categories.book_id IS NULL THEN c.user_id = auth.uid()
+            ELSE c.book_id = get_categories.book_id
+        END AND
         c.is_active = TRUE;
 END;
 $$;
@@ -53,7 +60,6 @@ BEGIN
         description = update_category.description,
         updated_at = NOW()
     WHERE
-        c.user_id = auth.uid() AND
         c.id = update_category.id;
 END;
 $$;
@@ -76,7 +82,6 @@ BEGIN
         is_active = FALSE,
         updated_at = NOW()
     WHERE
-        c.user_id = auth.uid() AND
         c.id = delete_category.id;
 END;
 $$;

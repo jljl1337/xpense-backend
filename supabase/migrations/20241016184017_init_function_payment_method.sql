@@ -10,7 +10,12 @@ SET search_path TO ''
 AS $$
 BEGIN
     INSERT INTO public.payment_method (user_id, book_id, name, description)
-    VALUES (auth.uid(), book_id, name, description);
+    VALUES (
+        CASE WHEN book_id IS NULL THEN auth.uid() ELSE NULL END,
+        book_id,
+        name,
+        description
+    );
 END;
 $$;
 
@@ -29,8 +34,10 @@ BEGIN
     FROM
         public.payment_method AS pm
     WHERE
-        pm.user_id = auth.uid() AND
-        COALESCE(pm.book_id::text, '') = COALESCE(get_payment_methods.book_id::text, '') AND
+        CASE
+            WHEN get_payment_methods.book_id IS NULL THEN pm.user_id = auth.uid()
+            ELSE pm.book_id = get_payment_methods.book_id
+        END AND
         pm.is_active = TRUE;
 END;
 $$;
@@ -53,7 +60,6 @@ BEGIN
         description = update_payment_method.description,
         updated_at = NOW()
     WHERE
-        pm.user_id = auth.uid() AND
         pm.id = update_payment_method.id;
 END;
 $$;
@@ -76,7 +82,6 @@ BEGIN
         is_active = FALSE,
         updated_at = NOW()
     WHERE
-        pm.user_id = auth.uid() AND
         pm.id = delete_payment_method.id;
 END;
 $$;

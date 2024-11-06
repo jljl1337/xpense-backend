@@ -50,7 +50,6 @@ BEGIN
         description = update_book.description,
         updated_at = NOW()
     WHERE
-        b.user_id = auth.uid() AND
         b.id = update_book.id;
 END;
 $$;
@@ -71,7 +70,6 @@ BEGIN
         is_active = FALSE,
         updated_at = NOW()
     WHERE
-        b.user_id = auth.uid() AND
         b.id = delete_book.id;
 END;
 $$;
