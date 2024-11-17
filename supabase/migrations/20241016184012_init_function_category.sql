@@ -57,8 +57,7 @@ BEGIN
         public.category AS c
     SET
         name = update_category.name,
-        description = update_category.description,
-        updated_at = NOW()
+        description = update_category.description
     WHERE
         c.id = update_category.id;
 END;
@@ -79,8 +78,7 @@ BEGIN
     UPDATE
         public.category AS c
     SET
-        is_active = FALSE,
-        updated_at = NOW()
+        is_active = FALSE
     WHERE
         c.id = delete_category.id;
 END;

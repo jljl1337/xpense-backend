@@ -58,8 +58,7 @@ BEGIN
         payment_method_id = update_expense.payment_method_id,
         amount = update_expense.amount,
         remark = update_expense.remark,
-        date = update_expense.date,
-        updated_at = NOW()
+        date = update_expense.date
     WHERE
         e.id = update_expense.id;
 END;
@@ -78,8 +77,7 @@ BEGIN
     UPDATE
         public.expense AS e
     SET
-        is_active = FALSE,
-        updated_at = NOW()
+        is_active = FALSE
     WHERE
         e.id = delete_expense.id;
 END;

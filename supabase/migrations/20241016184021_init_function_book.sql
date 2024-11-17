@@ -47,8 +47,7 @@ BEGIN
         public.book AS b
     SET
         name = update_book.name,
-        description = update_book.description,
-        updated_at = NOW()
+        description = update_book.description
     WHERE
         b.id = update_book.id;
 END;
@@ -67,8 +66,7 @@ BEGIN
     UPDATE
         public.book AS b
     SET
-        is_active = FALSE,
-        updated_at = NOW()
+        is_active = FALSE
     WHERE
         b.id = delete_book.id;
 END;

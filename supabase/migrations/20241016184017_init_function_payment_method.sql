@@ -57,8 +57,7 @@ BEGIN
         public.payment_method AS pm
     SET
         name = update_payment_method.name,
-        description = update_payment_method.description,
-        updated_at = NOW()
+        description = update_payment_method.description
     WHERE
         pm.id = update_payment_method.id;
 END;
@@ -79,8 +78,7 @@ BEGIN
     UPDATE
         public.payment_method AS pm
     SET
-        is_active = FALSE,
-        updated_at = NOW()
+        is_active = FALSE
     WHERE
         pm.id = delete_payment_method.id;
 END;
