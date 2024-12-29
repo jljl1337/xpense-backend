@@ -9,6 +9,6 @@
     "reset": "supabase db reset"
   },
   "devDependencies": {
-    "supabase": "^1.204.3"
+    "supabase": "^2.1.1"
   }
 }
