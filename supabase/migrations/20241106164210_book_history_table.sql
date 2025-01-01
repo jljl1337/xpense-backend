@@ -22,17 +22,15 @@ ON book_history FOR SELECT
 TO authenticated
 USING ( (SELECT auth.uid()) = user_id );
 
--- Create policy for inserting into history (via trigger only)
-CREATE POLICY "User can insert their book history"
-ON book_history FOR INSERT
-TO authenticated
-WITH CHECK ( (SELECT auth.uid()) = user_id );
-
 -- Create function for trigger
 CREATE OR REPLACE FUNCTION process_book_history() 
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO ''
+AS $$
 BEGIN
-    INSERT INTO book_history (
+    INSERT INTO public.book_history (
         id, user_id, created_at, updated_at, is_active, name, description
     )
     VALUES (
@@ -40,10 +38,10 @@ BEGIN
     );
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 -- Create trigger
 CREATE TRIGGER book_history_trigger
-    AFTER INSERT OR UPDATE ON book
-    FOR EACH ROW
-    EXECUTE FUNCTION process_book_history();
+AFTER INSERT OR UPDATE ON public.book
+FOR EACH ROW
+EXECUTE FUNCTION process_book_history();
