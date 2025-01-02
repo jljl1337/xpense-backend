@@ -1,3 +1,9 @@
+CREATE SCHEMA IF NOT EXISTS xpense;
+GRANT USAGE ON SCHEMA xpense TO authenticated;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA xpense GRANT ALL ON TABLES TO authenticated;
+
+SET search_path TO xpense;
+
 -- Book table
 CREATE TABLE book (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

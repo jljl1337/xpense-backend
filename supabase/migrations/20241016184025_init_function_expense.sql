@@ -1,3 +1,5 @@
+SET search_path TO xpense;
+
 -- Create expense function
 CREATE OR REPLACE FUNCTION create_expense(
     book_id uuid,
@@ -12,7 +14,7 @@ LANGUAGE plpgsql
 SET search_path TO ''
 AS $$
 BEGIN
-    INSERT INTO public.expense (book_id, category_id, payment_method_id, amount, remark, date)
+    INSERT INTO xpense.expense (book_id, category_id, payment_method_id, amount, remark, date)
     VALUES (book_id, category_id, payment_method_id, amount, remark, date);
 END;
 $$;
@@ -30,7 +32,7 @@ BEGIN
     SELECT
         *
     FROM
-        public.expense AS e
+        xpense.expense AS e
     WHERE
         e.book_id = get_expenses.book_id AND
         e.is_active = TRUE;
@@ -52,7 +54,7 @@ SET search_path TO ''
 AS $$
 BEGIN
     UPDATE
-        public.expense AS e
+        xpense.expense AS e
     SET
         category_id = update_expense.category_id,
         payment_method_id = update_expense.payment_method_id,
@@ -75,7 +77,7 @@ AS $$
 BEGIN
     -- Delete expense by deactivating it
     UPDATE
-        public.expense AS e
+        xpense.expense AS e
     SET
         is_active = FALSE
     WHERE

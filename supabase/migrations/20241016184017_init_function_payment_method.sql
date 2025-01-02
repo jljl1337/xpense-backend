@@ -1,3 +1,5 @@
+SET search_path TO xpense;
+
 -- Create payment method function
 CREATE OR REPLACE FUNCTION create_payment_method(
     name text,
@@ -9,7 +11,7 @@ LANGUAGE plpgsql
 SET search_path TO ''
 AS $$
 BEGIN
-    INSERT INTO public.payment_method (user_id, book_id, name, description)
+    INSERT INTO xpense.payment_method (user_id, book_id, name, description)
     VALUES (
         CASE WHEN book_id IS NULL THEN auth.uid() ELSE NULL END,
         book_id,
@@ -32,7 +34,7 @@ BEGIN
     SELECT
         *
     FROM
-        public.payment_method AS pm
+        xpense.payment_method AS pm
     WHERE
         CASE
             WHEN get_payment_methods.book_id IS NULL THEN pm.user_id = auth.uid()
@@ -54,7 +56,7 @@ SET search_path TO ''
 AS $$
 BEGIN
     UPDATE
-        public.payment_method AS pm
+        xpense.payment_method AS pm
     SET
         name = update_payment_method.name,
         description = update_payment_method.description
@@ -76,7 +78,7 @@ DECLARE
 BEGIN
     -- Delete payment method by deactivating it
     UPDATE
-        public.payment_method AS pm
+        xpense.payment_method AS pm
     SET
         is_active = FALSE
     WHERE

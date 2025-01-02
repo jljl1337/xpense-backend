@@ -1,3 +1,5 @@
+SET search_path TO xpense;
+
 -- Create book function
 CREATE OR REPLACE FUNCTION create_book(
     name text,
@@ -9,7 +11,7 @@ SET search_path TO ''
 AS $$
 BEGIN
     -- Create book
-    INSERT INTO public.book (name, description, user_id)
+    INSERT INTO xpense.book (name, description, user_id)
     VALUES (name, description, auth.uid());
 END;
 $$;
@@ -25,7 +27,7 @@ BEGIN
     SELECT
         *
     FROM
-        public.book AS b
+        xpense.book AS b
     WHERE
         b.user_id = auth.uid() AND
         b.is_active = TRUE;
@@ -44,7 +46,7 @@ SET search_path TO ''
 AS $$
 BEGIN
     UPDATE
-        public.book AS b
+        xpense.book AS b
     SET
         name = update_book.name,
         description = update_book.description
@@ -64,7 +66,7 @@ AS $$
 BEGIN
     -- Delete book by deactivating it
     UPDATE
-        public.book AS b
+        xpense.book AS b
     SET
         is_active = FALSE
     WHERE

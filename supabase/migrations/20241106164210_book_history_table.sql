@@ -1,3 +1,5 @@
+SET search_path TO xpense;
+
 -- Create history table
 CREATE TABLE book_history (
     id uuid NOT NULL,
@@ -30,7 +32,7 @@ SECURITY DEFINER
 SET search_path TO ''
 AS $$
 BEGIN
-    INSERT INTO public.book_history (
+    INSERT INTO xpense.book_history (
         id, user_id, created_at, updated_at, is_active, name, description
     )
     VALUES (
@@ -42,6 +44,6 @@ $$;
 
 -- Create trigger
 CREATE TRIGGER book_history_trigger
-AFTER INSERT OR UPDATE ON public.book
+AFTER INSERT OR UPDATE ON xpense.book
 FOR EACH ROW
 EXECUTE FUNCTION process_book_history();

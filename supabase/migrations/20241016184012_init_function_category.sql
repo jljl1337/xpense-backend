@@ -1,3 +1,5 @@
+SET search_path TO xpense;
+
 -- Create category function
 CREATE OR REPLACE FUNCTION create_category(
     name text,
@@ -9,7 +11,7 @@ LANGUAGE plpgsql
 SET search_path TO ''
 AS $$
 BEGIN
-    INSERT INTO public.category (user_id, book_id, name, description)
+    INSERT INTO xpense.category (user_id, book_id, name, description)
     VALUES (
         CASE WHEN book_id IS NULL THEN auth.uid() ELSE NULL END,
         book_id,
@@ -32,7 +34,7 @@ BEGIN
     SELECT
         *
     FROM
-        public.category AS c
+        xpense.category AS c
     WHERE
         CASE
             WHEN get_categories.book_id IS NULL THEN c.user_id = auth.uid()
@@ -54,7 +56,7 @@ SET search_path TO ''
 AS $$
 BEGIN
     UPDATE
-        public.category AS c
+        xpense.category AS c
     SET
         name = update_category.name,
         description = update_category.description
@@ -76,7 +78,7 @@ DECLARE
 BEGIN
     -- Delete category by deactivating it
     UPDATE
-        public.category AS c
+        xpense.category AS c
     SET
         is_active = FALSE
     WHERE
