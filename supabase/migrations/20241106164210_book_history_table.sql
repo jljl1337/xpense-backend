@@ -11,7 +11,6 @@ CREATE TABLE book_history (
     description text NOT NULL,
     -- Additional history tracking columns
     history_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    history_timestamp timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL,
     history_user_id uuid DEFAULT auth.uid()
 );
 
