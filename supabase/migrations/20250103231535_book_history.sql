@@ -21,7 +21,7 @@ ALTER TABLE book_history ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "User can view their book history"
 ON book_history FOR SELECT
 TO authenticated
-USING ( (SELECT auth.uid()) = user_id );
+USING ( can_access_book(id) );
 
 -- Create function for trigger
 CREATE OR REPLACE FUNCTION process_book_history() 

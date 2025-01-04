@@ -2,28 +2,23 @@ SET search_path TO xpense;
 
 -- Create category function
 CREATE OR REPLACE FUNCTION create_category(
+    book_id uuid,
     name text,
-    description text,
-    book_id uuid DEFAULT NULL
+    description text
 )
 RETURNS void
 LANGUAGE plpgsql
 SET search_path TO ''
 AS $$
 BEGIN
-    INSERT INTO xpense.category (user_id, book_id, name, description)
-    VALUES (
-        CASE WHEN book_id IS NULL THEN auth.uid() ELSE NULL END,
-        book_id,
-        name,
-        description
-    );
+    INSERT INTO xpense.category (book_id, name, description)
+    VALUES (book_id, name, description);
 END;
 $$;
 
 -- Get category function
 CREATE OR REPLACE FUNCTION get_categories(
-    book_id uuid DEFAULT NULL
+    book_id uuid
 )
 RETURNS SETOF category
 LANGUAGE plpgsql
@@ -36,10 +31,7 @@ BEGIN
     FROM
         xpense.category AS c
     WHERE
-        CASE
-            WHEN get_categories.book_id IS NULL THEN c.user_id = auth.uid()
-            ELSE c.book_id = get_categories.book_id
-        END AND
+        c.book_id = get_categories.book_id AND
         c.is_active = TRUE;
 END;
 $$;
