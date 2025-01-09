@@ -11,7 +11,7 @@ CREATE TABLE book_history (
     description text NOT NULL,
     -- Additional history tracking columns
     history_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    history_user_id uuid DEFAULT auth.uid()
+    history_user_id uuid NOT NULL DEFAULT auth.uid()
 );
 
 -- Enable RLS on history table
