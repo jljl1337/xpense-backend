@@ -8,7 +8,11 @@
 
 ## Commands
 
+All of the following commands are available as VS Code tasks.
+
 `npx supabase start` - Start the local Supabase instance
+`npx supabase stop` - Stop the local Supabase instance
+`npx supabase status` - Check the status of the running local Supabase instance
 `npx supabase migration new <migration_name>` - Create a new migration
 `npx supabase db reset` - Reset and apply all migrations
 `npx supabase db dump --data-only -f supabase/seed.sql --local` - Dump the data from the local Supabase instance

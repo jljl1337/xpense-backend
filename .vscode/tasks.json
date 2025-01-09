@@ -1,0 +1,67 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Supabase",
+      "type": "shell",
+      "command": "npx supabase start",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Stop Supabase",
+      "type": "shell",
+      "command": "npx supabase stop",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Reset Supabase",
+      "type": "shell",
+      "command": "npx supabase db reset",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Supabase status",
+      "type": "shell",
+      "command": "npx supabase status",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Dump seed",
+      "type": "shell",
+      "command": "npx supabase db dump --data-only -f supabase/seed.sql --local",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Create a new migration",
+      "type": "shell",
+      "command": "npx supabase migration new ${input:migration_name}",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+  ],
+  "inputs": [
+    {
+      "id": "migration_name",
+      "description": "Migration name",
+      "default": "new_migration",
+      "type": "promptString"
+    },
+  ],
+}
