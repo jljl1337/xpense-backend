@@ -12,4 +12,4 @@ RUN pnpm install --frozen-lockfile
 # Copy the supabase project
 COPY supabase /app/supabase
 
-ENTRYPOINT [ "pnpm supabase db push" ]
+ENTRYPOINT [ "pnpm", "supabase", "db", "push" ]
