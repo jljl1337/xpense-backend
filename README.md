@@ -2,14 +2,17 @@
 
 ## Setup
 
-1. Install Docker
-2. Fill in the secrets in the environment variables in the `docker-compose.yml` file
+1. Install Docker and pnpm
+2. Run `pnpm i` to install supabase cli
+3. Run `sudo ln -s /run/user/1000/docker.sock /var/run/docker.sock` if rootless docker is used (and/or update `DOCKER_HOST` to `unix:///run/user/1000/docker.sock`)
 
 ## Commands
 
-`docker compose up -d --build` - Start the backend server
-`docker compose down` - Stop the backend server
+All of the following commands are available as VS Code tasks.
 
-## TODO
-
-1. Update model to properly support typescript
+`pnpm supabase start` - Start the local Supabase instance
+`pnpm supabase stop` - Stop the local Supabase instance
+`pnpm supabase status` - Check the status of the running local Supabase instance
+`pnpm supabase migration new <migration_name>` - Create a new migration
+`pnpm supabase db reset` - Reset and apply all migrations
+`pnpm supabase db dump --data-only -f supabase/seed.sql --local` - Dump the data from the local Supabase instance

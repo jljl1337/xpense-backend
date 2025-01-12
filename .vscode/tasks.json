@@ -2,14 +2,75 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "generate .env.example",
+      "label": "Use Node 22",
       "type": "shell",
-      "command": "cp .env .env.example && sed -i 's/=.*/=/g' .env.example",
+      "command": "pnpm env use -g 22",
+      "presentation": {
+        "reveal": "always",
+      },
       "problemMatcher": [],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
-    }
-  ]
+    },
+    {
+      "label": "Start Supabase",
+      "type": "shell",
+      "command": "pnpm supabase start",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Stop Supabase",
+      "type": "shell",
+      "command": "pnpm supabase stop",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Reset Supabase",
+      "type": "shell",
+      "command": "pnpm supabase db reset",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Supabase status",
+      "type": "shell",
+      "command": "pnpm supabase status",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Dump seed",
+      "type": "shell",
+      "command": "pnpm supabase db dump --data-only -f supabase/seed.sql --local",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Create a new migration",
+      "type": "shell",
+      "command": "pnpm supabase migration new ${input:migration_name}",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+  ],
+  "inputs": [
+    {
+      "id": "migration_name",
+      "description": "Migration name",
+      "default": "new_migration",
+      "type": "promptString"
+    },
+  ],
 }
