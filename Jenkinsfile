@@ -15,7 +15,7 @@ pipeline {
 
         stage('Run') {
             steps {
-                sh('docker run --rm xpense-deploy --dry-run --db-url "$DB_URL"')
+                sh('docker run --rm xpense-deploy --db-url "$DB_URL"')
             }
         }
 
