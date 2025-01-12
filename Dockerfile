@@ -4,9 +4,12 @@ FROM node:22-slim
 RUN corepack enable
 
 WORKDIR /app
-COPY . /app
 
 # Install dependencies
-RUN pnpm install
+COPY package.json pnpm-lock.yaml /app/
+RUN pnpm install --frozen-lockfile
+
+# Copy the supabase project
+COPY supabase /app/supabase
 
 ENTRYPOINT [ "pnpm supabase db push" ]
