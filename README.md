@@ -10,9 +10,9 @@
 
 All of the following commands are available as VS Code tasks.
 
-`pnpm supabase start` - Start the local Supabase instance
-`pnpm supabase stop` - Stop the local Supabase instance
-`pnpm supabase status` - Check the status of the running local Supabase instance
-`pnpm supabase migration new <migration_name>` - Create a new migration
-`pnpm supabase db reset` - Reset and apply all migrations
-`pnpm supabase db dump --data-only -f supabase/seed.sql --local` - Dump the data from the local Supabase instance
+- `pnpm supabase start` - Start the local Supabase instance
+- `pnpm supabase stop` - Stop the local Supabase instance
+- `pnpm supabase status` - Check the status of the running local Supabase instance
+- `pnpm supabase migration new <migration_name>` - Create a new migration
+- `pnpm supabase db reset` - Reset and apply all migrations
+- `pnpm supabase db dump --data-only -f supabase/seed.sql --local` - Dump the data from the local Supabase instance
