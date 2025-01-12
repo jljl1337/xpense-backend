@@ -9,7 +9,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh('docker build -t xpense-deploy .')
+                sh('docker build --load -t xpense-deploy .')
             }
         }
 
