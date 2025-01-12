@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        TEST_SECRET = credentials('test-secret')
+        DB_URL = credentials('supabase-db-url')
     }
 
     stages {
@@ -13,11 +13,11 @@ pipeline {
             }
         }
 
-        // stage('Run') {
-        //     steps {
-        //         sh('docker run --rm xpense-deploy --dry-run')
-        //     }
-        // }
+        stage('Run') {
+            steps {
+                sh('docker run --rm xpense-deploy --dry-run --db-url "$DB_URL"')
+            }
+        }
 
         stage('Cleanup') {
             steps {
