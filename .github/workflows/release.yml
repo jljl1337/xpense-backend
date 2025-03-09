@@ -1,0 +1,33 @@
+name: Create a release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create_release:
+    name: Create a release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Get the version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+
+      - name: Remove release if it exists
+        run: gh release delete v${{ steps.package-version.outputs.current-version }} --cleanup-tag -y
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create a release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.package-version.outputs.current-version }}
+          generate_release_notes: true
