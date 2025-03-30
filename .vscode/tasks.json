@@ -2,6 +2,15 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Install project",
+      "type": "shell",
+      "command": "pnpm i",
+      "presentation": {
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Login Supabase account",
       "type": "shell",
       "command": "pnpm supabase login",
