@@ -2,16 +2,25 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Use Node 22",
+      "label": "Login Supabase account",
       "type": "shell",
-      "command": "pnpm env use -g 22",
+      "command": "pnpm supabase login",
       "presentation": {
         "reveal": "always",
       },
       "problemMatcher": [],
     },
     {
-      "label": "Start Supabase",
+      "label": "Link Supabase project",
+      "type": "shell",
+      "command": "pnpm supabase link --project-ref ${input:project_ref}",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Start local Supabase",
       "type": "shell",
       "command": "pnpm supabase start",
       "presentation": {
@@ -20,7 +29,7 @@
       "problemMatcher": [],
     },
     {
-      "label": "Stop Supabase",
+      "label": "Stop local Supabase",
       "type": "shell",
       "command": "pnpm supabase stop",
       "presentation": {
@@ -29,16 +38,7 @@
       "problemMatcher": [],
     },
     {
-      "label": "Reset Supabase",
-      "type": "shell",
-      "command": "pnpm supabase db reset",
-      "presentation": {
-        "reveal": "always",
-      },
-      "problemMatcher": [],
-    },
-    {
-      "label": "Supabase status",
+      "label": "Local Supabase status",
       "type": "shell",
       "command": "pnpm supabase status",
       "presentation": {
@@ -47,9 +47,54 @@
       "problemMatcher": [],
     },
     {
-      "label": "Dump seed",
+      "label": "Reset local Supabase",
+      "type": "shell",
+      "command": "pnpm supabase db reset --local",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Reset linked Supabase",
+      "type": "shell",
+      "command": "pnpm supabase db reset --linked",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Push migrations to local Supabase",
+      "type": "shell",
+      "command": "pnpm supabase db push --local",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Push migrations to linked Supabase",
+      "type": "shell",
+      "command": "pnpm supabase db push --linked",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Dump seed from local Supabase",
       "type": "shell",
       "command": "pnpm supabase db dump --data-only -f supabase/seed.sql --local",
+      "presentation": {
+        "reveal": "always",
+      },
+      "problemMatcher": [],
+    },
+    {
+      "label": "Dump seed from linked Supabase",
+      "type": "shell",
+      "command": "pnpm supabase db dump --data-only -f supabase/seed.sql --linked",
       "presentation": {
         "reveal": "always",
       },
@@ -72,5 +117,11 @@
       "default": "new_migration",
       "type": "promptString"
     },
+    {
+      "id": "project_ref",
+      "description": "Project ID",
+      "default": "someprojectid",
+      "type": "promptString"
+    }
   ],
 }
