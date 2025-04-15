@@ -12,4 +12,8 @@ RUN pnpm install --frozen-lockfile
 # Copy the supabase project
 COPY supabase /app/supabase
 
-ENTRYPOINT [ "pnpm", "supabase", "db", "push" ]
+# Copy the entrypoint script
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT [ "bash", "./entrypoint.sh" ]
