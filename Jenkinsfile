@@ -6,7 +6,6 @@ pipeline {
     }
 
     stages {
-
         stage('Build') {
             steps {
                 sh('docker build --load -t xpense-deploy .')
@@ -15,7 +14,7 @@ pipeline {
 
         stage('Run') {
             steps {
-                sh('docker run --rm xpense-deploy --db-url "$DB_URL"')
+                sh('docker run --rm -e DB_URL="$DB_URL" xpense-deploy')
             }
         }
 

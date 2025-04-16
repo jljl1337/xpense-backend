@@ -1,11 +1,11 @@
 {
   "name": "xpense-backend",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "engines": {
     "node": ">=22"
   },
   "devDependencies": {
-    "supabase": "^2.20.5"
+    "supabase": "^2.20.12"
   },
   "pnpm": {
     "onlyBuiltDependencies": ["supabase"]
