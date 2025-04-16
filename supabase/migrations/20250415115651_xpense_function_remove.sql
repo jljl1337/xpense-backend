@@ -1,0 +1,16 @@
+DROP FUNCTION xpense_private.create_book;
+DROP FUNCTION xpense_private.create_category;
+DROP FUNCTION xpense_private.create_expense;
+DROP FUNCTION xpense_private.create_payment_method;
+DROP FUNCTION xpense_private.delete_book;
+DROP FUNCTION xpense_private.delete_category;
+DROP FUNCTION xpense_private.delete_expense;
+DROP FUNCTION xpense_private.delete_payment_method;
+DROP FUNCTION xpense_private.get_books;
+DROP FUNCTION xpense_private.get_categories;
+DROP FUNCTION xpense_private.get_expenses;
+DROP FUNCTION xpense_private.get_payment_methods;
+DROP FUNCTION xpense_private.update_book;
+DROP FUNCTION xpense_private.update_category;
+DROP FUNCTION xpense_private.update_expense;
+DROP FUNCTION xpense_private.update_payment_method;
