@@ -29,3 +29,15 @@ func (s *UserService) UserExistsByEmail(email string) (bool, error) {
 	}
 	return true, nil
 }
+
+func (s *UserService) GetUserByID(userID string) (*repository.User, error) {
+	ctx := context.Background()
+	user, err := s.queries.GetUserByID(ctx, userID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &user, nil
+}
