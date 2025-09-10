@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"time"
+	"database/sql"
+	"errors"
 
-	"github.com/jljl1337/xpense-backend/internal/generator"
 	"github.com/jljl1337/xpense-backend/internal/repository"
 )
 
@@ -18,13 +18,14 @@ func NewUserService(queries *repository.Queries) *UserService {
 	}
 }
 
-func (s *UserService) CreateUser(email, passwordHash string) error {
+func (s *UserService) UserExistsByEmail(email string) (bool, error) {
 	ctx := context.Background()
-	return s.queries.CreateUser(ctx, repository.CreateUserParams{
-		ID:           generator.NewKSUID(),
-		Email:        email,
-		PasswordHash: passwordHash,
-		CreatedAt:    time.Now().UnixMilli(),
-		UpdatedAt:    time.Now().UnixMilli(),
-	})
+	_, err := s.queries.GetUserByEmail(ctx, email)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }
