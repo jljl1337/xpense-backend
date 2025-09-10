@@ -44,7 +44,8 @@ func (h *UserHandler) getCurrentUserHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	if user == nil {
-		http.Error(w, "User not found", http.StatusNotFound)
+		slog.Error("User not found with ID: " + userID)
+		http.Error(w, "Failed to get the current user", http.StatusInternalServerError)
 		return
 	}
 
