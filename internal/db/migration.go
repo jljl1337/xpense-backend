@@ -68,22 +68,23 @@ func Migrate(db *sql.DB) error {
 		return err
 	}
 
-	// Get the list of migration files from the embedded filesystem
-	files, err := s.MigrationDir.ReadDir("migration")
+	// Get the list of migration entryList from the embedded filesystem
+	entryList, err := s.MigrationDir.ReadDir("migration")
 	if err != nil {
 		return err
 	}
 
 	// Apply each migration if it hasn't been applied yet
-	for _, file := range files {
+	for _, entry := range entryList {
 
 		// Skip directories
-		if file.IsDir() {
+		if entry.IsDir() {
+			slog.Warn("Skipping directory in migrations: " + entry.Name())
 			continue
 		}
 
 		// Get the migration statement
-		id := file.Name()
+		id := entry.Name()
 
 		statementBytes, err := s.MigrationDir.ReadFile("migration/" + id)
 		if err != nil {
