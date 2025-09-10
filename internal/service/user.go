@@ -18,7 +18,8 @@ func NewUserService(queries *repository.Queries) *UserService {
 	}
 }
 
-func (s *UserService) CreateUser(ctx context.Context, email, passwordHash string) error {
+func (s *UserService) CreateUser(email, passwordHash string) error {
+	ctx := context.Background()
 	return s.queries.CreateUser(ctx, repository.CreateUserParams{
 		ID:           generator.NewKSUID(),
 		Email:        email,

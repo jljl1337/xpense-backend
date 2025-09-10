@@ -1,8 +1,6 @@
 package service
 
 import (
-	"context"
-
 	"github.com/jljl1337/xpense-backend/internal/crypto"
 )
 
@@ -23,7 +21,6 @@ func (a *AuthService) Register(email, password string) error {
 	}
 
 	return a.userService.CreateUser(
-		context.Background(),
 		email,
 		passwordHash,
 	)
