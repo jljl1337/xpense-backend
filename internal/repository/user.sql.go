@@ -56,7 +56,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id string) error {
 	return err
 }
 
-const getUser = `-- name: GetUser :one
+const getUser = `-- name: GetUser :many
 SELECT
     id, email, password_hash, created_at, updated_at
 FROM
@@ -65,17 +65,33 @@ WHERE
     id = ?1
 `
 
-func (q *Queries) GetUser(ctx context.Context, id string) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUser, id)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.PasswordHash,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
+func (q *Queries) GetUser(ctx context.Context, id string) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, getUser, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.PasswordHash,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updateUser = `-- name: UpdateUser :exec
