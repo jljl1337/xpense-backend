@@ -16,15 +16,17 @@ INSERT INTO session (
     user_id,
     token,
     csrf_token,
+    expires_at,
     created_at,
-    expires_at
+    updated_at
 ) VALUES (
     ?1,
     ?2,
     ?3,
     ?4,
     ?5,
-    ?6
+    ?6,
+    ?7
 )
 RETURNING
     id, user_id, token, csrf_token, expires_at, last_used_at, created_at, updated_at
@@ -35,8 +37,9 @@ type CreateSessionParams struct {
 	UserID    string
 	Token     string
 	CsrfToken string
-	CreatedAt int64
 	ExpiresAt int64
+	CreatedAt int64
+	UpdatedAt int64
 }
 
 func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error) {
@@ -45,8 +48,9 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 		arg.UserID,
 		arg.Token,
 		arg.CsrfToken,
-		arg.CreatedAt,
 		arg.ExpiresAt,
+		arg.CreatedAt,
+		arg.UpdatedAt,
 	)
 	var i Session
 	err := row.Scan(

@@ -4,15 +4,17 @@ INSERT INTO session (
     user_id,
     token,
     csrf_token,
+    expires_at,
     created_at,
-    expires_at
+    updated_at
 ) VALUES (
     @id,
     @user_id,
     @token,
     @csrf_token,
+    @expires_at,
     @created_at,
-    @expires_at
+    @updated_at
 )
 RETURNING
     *;
