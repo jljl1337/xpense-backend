@@ -66,20 +66,21 @@ func (h *AuthHandler) loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessionID, CSRFToken, err := h.authService.Login(req.Email, req.Password)
+	sessionToken, CSRFToken, err := h.authService.Login(req.Email, req.Password)
 	if err != nil {
-		if sessionID == "" && CSRFToken == "" {
-			http.Error(w, "Invalid credentials", http.StatusUnauthorized)
-			return
-		}
 		slog.Error("Error logging in user: " + err.Error())
 		http.Error(w, "Failed to log in user", http.StatusInternalServerError)
 		return
 	}
 
+	if sessionToken == "" && CSRFToken == "" {
+		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+		return
+	}
+
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session_id",
-		Value:    sessionID,
+		Name:     "session_token",
+		Value:    sessionToken,
 		HttpOnly: true,
 		Secure:   true,
 	})

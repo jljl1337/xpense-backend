@@ -40,7 +40,7 @@ func (a *AuthService) SignUp(email, password string) error {
 }
 
 // Login authenticates a user and creates a new session.
-// It returns non-empty session ID and CSRF token if the credentials are valid.
+// It returns non-empty session token and CSRF token if the credentials are valid.
 // If the credentials are invalid, it returns empty strings and no error.
 // If an error occurs during the process, it returns the error.
 func (a *AuthService) Login(email, password string) (string, string, error) {
@@ -59,6 +59,7 @@ func (a *AuthService) Login(email, password string) (string, string, error) {
 	}
 
 	sessionID := generator.NewKSUID()
+	sessionToken := generator.NewToken(16)
 	CSRFToken := generator.NewToken(16)
 	currentTime := time.Now().UnixMilli()
 	expiresAt := time.Now().Add(24 * time.Hour).UnixMilli()
@@ -66,13 +67,14 @@ func (a *AuthService) Login(email, password string) (string, string, error) {
 	if _, err := a.queries.CreateSession(ctx, repository.CreateSessionParams{
 		ID:        sessionID,
 		UserID:    user.ID,
-		Token:     sessionID,
+		Token:     sessionToken,
 		CsrfToken: CSRFToken,
-		CreatedAt: currentTime,
 		ExpiresAt: expiresAt,
+		CreatedAt: currentTime,
+		UpdatedAt: currentTime,
 	}); err != nil {
 		return "", "", err
 	}
 
-	return sessionID, CSRFToken, nil
+	return sessionToken, CSRFToken, nil
 }
