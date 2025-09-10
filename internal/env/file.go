@@ -1,9 +1,15 @@
 package env
 
-import "github.com/joho/godotenv"
+import (
+	"errors"
+	"os"
 
-func LoadEnvFile() {
-	if err := godotenv.Load(); err != nil {
-		// It's okay if the .env file doesn't exist, we can proceed with existing env vars
+	"github.com/joho/godotenv"
+)
+
+func LoadOptionalEnvFile() {
+	// It's okay if the .env file doesn't exist, we can proceed with existing env vars
+	if err := godotenv.Load(); !errors.Is(err, os.ErrNotExist) {
+		panic(err)
 	}
 }
