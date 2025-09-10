@@ -13,7 +13,7 @@ INSERT INTO user (
     @updated_at
 );
 
--- name: GetUser :many
+-- name: GetUser :one
 SELECT
     *
 FROM

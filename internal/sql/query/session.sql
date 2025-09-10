@@ -15,7 +15,7 @@ INSERT INTO session (
     @expires_at
 );
 
--- name: GetSessionByToken :many
+-- name: GetSessionByToken :one
 SELECT
     *
 FROM
