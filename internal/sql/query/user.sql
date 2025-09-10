@@ -13,13 +13,21 @@ INSERT INTO user (
     @updated_at
 );
 
--- name: GetUser :one
+-- name: GetUserByID :one
 SELECT
     *
 FROM
     user
 WHERE
     id = @id;
+
+-- name: GetUserByEmail :one
+SELECT
+    *
+FROM
+    user
+WHERE
+    email = @email;
 
 -- name: UpdateUser :exec
 UPDATE

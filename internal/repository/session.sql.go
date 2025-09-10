@@ -10,7 +10,7 @@ import (
 	"database/sql"
 )
 
-const createSession = `-- name: CreateSession :exec
+const createSession = `-- name: CreateSession :one
 INSERT INTO session (
     id,
     user_id,
@@ -26,6 +26,8 @@ INSERT INTO session (
     ?5,
     ?6
 )
+RETURNING
+    id, user_id, token, csrf_token, expires_at, last_used_at, created_at, updated_at
 `
 
 type CreateSessionParams struct {
@@ -37,8 +39,8 @@ type CreateSessionParams struct {
 	ExpiresAt int64
 }
 
-func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) error {
-	_, err := q.db.ExecContext(ctx, createSession,
+func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error) {
+	row := q.db.QueryRowContext(ctx, createSession,
 		arg.ID,
 		arg.UserID,
 		arg.Token,
@@ -46,7 +48,18 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) er
 		arg.CreatedAt,
 		arg.ExpiresAt,
 	)
-	return err
+	var i Session
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Token,
+		&i.CsrfToken,
+		&i.ExpiresAt,
+		&i.LastUsedAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const deleteSession = `-- name: DeleteSession :exec

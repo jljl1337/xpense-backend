@@ -1,4 +1,4 @@
--- name: CreateSession :exec
+-- name: CreateSession :one
 INSERT INTO session (
     id,
     user_id,
@@ -13,7 +13,9 @@ INSERT INTO session (
     @csrf_token,
     @created_at,
     @expires_at
-);
+)
+RETURNING
+    *;
 
 -- name: GetSessionByToken :one
 SELECT
