@@ -30,13 +30,15 @@ func (a *AuthService) SignUp(email, password string) error {
 	ctx := context.Background()
 	currentTime := time.Now().UnixMilli()
 
-	return a.queries.CreateUser(ctx, repository.CreateUserParams{
+	_, err = a.queries.CreateUser(ctx, repository.CreateUserParams{
 		ID:           generator.NewKSUID(),
 		Email:        email,
 		PasswordHash: passwordHash,
 		CreatedAt:    currentTime,
 		UpdatedAt:    currentTime,
 	})
+
+	return err
 }
 
 // Login authenticates a user and creates a new session.
@@ -92,11 +94,12 @@ func (a *AuthService) GetSessionUserIDAndRefreshSession(sessionToken, CSRFToken 
 
 	session, err := a.queries.GetSessionByToken(ctx, sessionToken)
 
-	// No session with the given token
 	if err != nil {
+		// No session with the given token
 		if errors.Is(err, sql.ErrNoRows) {
 			return "", nil
 		}
+		return "", err
 	}
 
 	// CSRF token does not match
@@ -113,13 +116,37 @@ func (a *AuthService) GetSessionUserIDAndRefreshSession(sessionToken, CSRFToken 
 
 	// Refresh the session expiration
 	newExpiresAt := now.Add(24 * time.Hour).UnixMilli()
-	if err := a.queries.UpdateSession(ctx, repository.UpdateSessionParams{
-		ID:        session.ID,
+	rows, err := a.queries.UpdateSessionByToken(ctx, repository.UpdateSessionByTokenParams{
+		Token:     sessionToken,
 		ExpiresAt: newExpiresAt,
 		UpdatedAt: nowMillis,
-	}); err != nil {
+	})
+	if err != nil {
 		return "", err
 	}
 
+	if rows < 1 {
+		return "", errors.New("no session updated")
+	}
+
 	return session.UserID, nil
+}
+
+func (a *AuthService) Logout(sessionToken string) error {
+	ctx := context.Background()
+	now := time.Now().UnixMilli()
+	rows, err := a.queries.UpdateSessionByToken(ctx, repository.UpdateSessionByTokenParams{
+		Token:     sessionToken,
+		ExpiresAt: now,
+		UpdatedAt: now,
+	})
+	if err != nil {
+		return err
+	}
+
+	if rows < 1 {
+		return errors.New("no session updated")
+	}
+
+	return nil
 }

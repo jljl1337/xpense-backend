@@ -30,6 +30,7 @@ func NewAuthHandler(authService *service.AuthService) *AuthHandler {
 func (h *AuthHandler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /auth/sign-up", h.signUpHandler)
 	mux.HandleFunc("POST /auth/login", h.loginHandler)
+	mux.HandleFunc("POST /auth/logout", h.logoutHandler)
 }
 
 func (h *AuthHandler) signUpHandler(w http.ResponseWriter, r *http.Request) {
@@ -89,4 +90,29 @@ func (h *AuthHandler) loginHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(loginResponse{
 		CSRFToken: CSRFToken,
 	})
+}
+
+func (h *AuthHandler) logoutHandler(w http.ResponseWriter, r *http.Request) {
+	sessionToken, err := r.Cookie("session_token")
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	if err := h.authService.Logout(sessionToken.Value); err != nil {
+		slog.Error("Error logging out user: " + err.Error())
+		http.Error(w, "Failed to log out user", http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    "",
+		HttpOnly: true,
+		Secure:   true,
+		MaxAge:   -1,
+	})
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("User logged out successfully"))
 }
