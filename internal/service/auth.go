@@ -41,7 +41,9 @@ func (a *AuthService) SignUp(email, password string) error {
 
 // Login authenticates a user and creates a new session.
 // It returns non-empty session token and CSRF token if the credentials are valid.
+//
 // If the credentials are invalid, it returns empty strings and no error.
+//
 // If an error occurs during the process, it returns the error.
 func (a *AuthService) Login(email, password string) (string, string, error) {
 	ctx := context.Background()
@@ -77,4 +79,47 @@ func (a *AuthService) Login(email, password string) (string, string, error) {
 	}
 
 	return sessionToken, CSRFToken, nil
+}
+
+// GetSessionUserIDAndRefreshSession validates the session token and CSRF token,
+// refreshes the session expiration, and returns the associated user ID.
+//
+// If the session is invalid or expired, it returns an empty string and no error.
+//
+// If an error occurs during the process, it returns the error.
+func (a *AuthService) GetSessionUserIDAndRefreshSession(sessionToken, CSRFToken string) (string, error) {
+	ctx := context.Background()
+
+	session, err := a.queries.GetSessionByToken(ctx, sessionToken)
+
+	// No session with the given token
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", nil
+		}
+	}
+
+	// CSRF token does not match
+	if CSRFToken != "" && session.CsrfToken != CSRFToken {
+		return "", nil
+	}
+
+	// Session expired
+	now := time.Now()
+	nowMillis := now.UnixMilli()
+	if session.ExpiresAt < nowMillis {
+		return "", nil
+	}
+
+	// Refresh the session expiration
+	newExpiresAt := now.Add(24 * time.Hour).UnixMilli()
+	if err := a.queries.UpdateSession(ctx, repository.UpdateSessionParams{
+		ID:        session.ID,
+		ExpiresAt: newExpiresAt,
+		UpdatedAt: nowMillis,
+	}); err != nil {
+		return "", err
+	}
+
+	return session.UserID, nil
 }

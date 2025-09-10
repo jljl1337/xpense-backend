@@ -34,6 +34,7 @@ func NewServer(db *sql.DB) *Server {
 	stack := middleware.CreateStack(
 		middlewareProvider.CORS(),
 		middlewareProvider.Logging(),
+		middlewareProvider.Auth(),
 	)
 
 	return &Server{
