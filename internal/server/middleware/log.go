@@ -32,7 +32,7 @@ func (m *MiddlewareProvider) Logging() Middleware {
 			duration := time.Since(start)
 			slog.Info(
 				fmt.Sprintf(
-					"%s %d %s %s %s",
+					"%-5s %d %s %s %s",
 					r.Method,
 					wrapped.statusCode,
 					r.RequestURI,
