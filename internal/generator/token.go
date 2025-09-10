@@ -6,13 +6,12 @@ import (
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-func MustNewToken(length int) string {
+func NewToken(length int) string {
 	src := make([]byte, length)
-	if _, err := rand.Read(src); err != nil {
-		panic(err)
-	}
 
-	for i := range length {
+	rand.Read(src)
+
+	for i := range src {
 		src[i] = charset[int(src[i])%len(charset)]
 	}
 
