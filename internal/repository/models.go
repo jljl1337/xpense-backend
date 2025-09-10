@@ -4,10 +4,6 @@
 
 package repository
 
-import (
-	"database/sql"
-)
-
 type Book struct {
 	ID          string
 	UserID      string
@@ -18,14 +14,13 @@ type Book struct {
 }
 
 type Session struct {
-	ID         string
-	UserID     string
-	Token      string
-	CsrfToken  string
-	ExpiresAt  int64
-	LastUsedAt sql.NullInt64
-	CreatedAt  int64
-	UpdatedAt  int64
+	ID        string
+	UserID    string
+	Token     string
+	CsrfToken string
+	ExpiresAt int64
+	CreatedAt int64
+	UpdatedAt int64
 }
 
 type User struct {

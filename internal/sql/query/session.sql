@@ -32,7 +32,6 @@ UPDATE
     session
 SET
     expires_at = @expires_at,
-    last_used_at = @last_used_at,
     updated_at = @updated_at
 WHERE
     id = @id;

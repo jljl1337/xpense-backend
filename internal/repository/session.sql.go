@@ -7,7 +7,6 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createSession = `-- name: CreateSession :one
@@ -29,7 +28,7 @@ INSERT INTO session (
     ?7
 )
 RETURNING
-    id, user_id, token, csrf_token, expires_at, last_used_at, created_at, updated_at
+    id, user_id, token, csrf_token, expires_at, created_at, updated_at
 `
 
 type CreateSessionParams struct {
@@ -59,7 +58,6 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 		&i.Token,
 		&i.CsrfToken,
 		&i.ExpiresAt,
-		&i.LastUsedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -80,7 +78,7 @@ func (q *Queries) DeleteSession(ctx context.Context, expiresAt int64) error {
 
 const getSessionByToken = `-- name: GetSessionByToken :one
 SELECT
-    id, user_id, token, csrf_token, expires_at, last_used_at, created_at, updated_at
+    id, user_id, token, csrf_token, expires_at, created_at, updated_at
 FROM
     session
 WHERE
@@ -96,7 +94,6 @@ func (q *Queries) GetSessionByToken(ctx context.Context, token string) (Session,
 		&i.Token,
 		&i.CsrfToken,
 		&i.ExpiresAt,
-		&i.LastUsedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -108,25 +105,18 @@ UPDATE
     session
 SET
     expires_at = ?1,
-    last_used_at = ?2,
-    updated_at = ?3
+    updated_at = ?2
 WHERE
-    id = ?4
+    id = ?3
 `
 
 type UpdateSessionParams struct {
-	ExpiresAt  int64
-	LastUsedAt sql.NullInt64
-	UpdatedAt  int64
-	ID         string
+	ExpiresAt int64
+	UpdatedAt int64
+	ID        string
 }
 
 func (q *Queries) UpdateSession(ctx context.Context, arg UpdateSessionParams) error {
-	_, err := q.db.ExecContext(ctx, updateSession,
-		arg.ExpiresAt,
-		arg.LastUsedAt,
-		arg.UpdatedAt,
-		arg.ID,
-	)
+	_, err := q.db.ExecContext(ctx, updateSession, arg.ExpiresAt, arg.UpdatedAt, arg.ID)
 	return err
 }
