@@ -9,7 +9,7 @@ import (
 
 func LoadOptionalEnvFile() {
 	// It's okay if the .env file doesn't exist, we can proceed with existing env vars
-	if err := godotenv.Load(); !errors.Is(err, os.ErrNotExist) {
+	if err := godotenv.Load(); err != nil && !errors.Is(err, os.ErrNotExist) {
 		panic(err)
 	}
 }
