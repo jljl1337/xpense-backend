@@ -54,7 +54,7 @@ func (m *MiddlewareProvider) Auth() Middleware {
 	}
 }
 
-func GetUserIDFromContext(ctx context.Context) (int, bool) {
-	userID, ok := ctx.Value(UserIDKey).(int)
+func GetUserIDFromContext(ctx context.Context) (string, bool) {
+	userID, ok := ctx.Value(UserIDKey).(string)
 	return userID, ok
 }
