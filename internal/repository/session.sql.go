@@ -64,16 +64,19 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 	return i, err
 }
 
-const deleteSession = `-- name: DeleteSession :exec
+const deleteSession = `-- name: DeleteSession :execrows
 DELETE FROM
     session
 WHERE
     expires_at < ?1
 `
 
-func (q *Queries) DeleteSession(ctx context.Context, expiresAt int64) error {
-	_, err := q.db.ExecContext(ctx, deleteSession, expiresAt)
-	return err
+func (q *Queries) DeleteSession(ctx context.Context, expiresAt int64) (int64, error) {
+	result, err := q.db.ExecContext(ctx, deleteSession, expiresAt)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
 const getSessionByToken = `-- name: GetSessionByToken :one
@@ -100,23 +103,26 @@ func (q *Queries) GetSessionByToken(ctx context.Context, token string) (Session,
 	return i, err
 }
 
-const updateSession = `-- name: UpdateSession :exec
+const updateSessionByToken = `-- name: UpdateSessionByToken :execrows
 UPDATE
     session
 SET
     expires_at = ?1,
     updated_at = ?2
 WHERE
-    id = ?3
+    token = ?3
 `
 
-type UpdateSessionParams struct {
+type UpdateSessionByTokenParams struct {
 	ExpiresAt int64
 	UpdatedAt int64
-	ID        string
+	Token     string
 }
 
-func (q *Queries) UpdateSession(ctx context.Context, arg UpdateSessionParams) error {
-	_, err := q.db.ExecContext(ctx, updateSession, arg.ExpiresAt, arg.UpdatedAt, arg.ID)
-	return err
+func (q *Queries) UpdateSessionByToken(ctx context.Context, arg UpdateSessionByTokenParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, updateSessionByToken, arg.ExpiresAt, arg.UpdatedAt, arg.Token)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }

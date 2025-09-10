@@ -1,4 +1,4 @@
--- name: CreateUser :exec
+-- name: CreateUser :one
 INSERT INTO user (
     id,
     email,
@@ -11,7 +11,9 @@ INSERT INTO user (
     @password_hash,
     @created_at,
     @updated_at
-);
+)
+RETURNING
+    *;
 
 -- name: GetUserByID :one
 SELECT
@@ -29,7 +31,7 @@ FROM
 WHERE
     email = @email;
 
--- name: UpdateUser :exec
+-- name: UpdateUser :execrows
 UPDATE
     user
 SET
@@ -39,7 +41,7 @@ SET
 WHERE
     id = @id;
 
--- name: DeleteUser :exec
+-- name: DeleteUser :execrows
 DELETE FROM
     user
 WHERE

@@ -27,16 +27,16 @@ FROM
 WHERE
     token = @token;
 
--- name: UpdateSession :exec
+-- name: UpdateSessionByToken :execrows
 UPDATE
     session
 SET
     expires_at = @expires_at,
     updated_at = @updated_at
 WHERE
-    id = @id;
+    token = @token;
 
--- name: DeleteSession :exec
+-- name: DeleteSession :execrows
 DELETE FROM
     session
 WHERE
