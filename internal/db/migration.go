@@ -91,7 +91,7 @@ func Migrate(db *sql.DB) error {
 		}
 		statement := string(statementBytes)
 
-		// Skip if the migration has already been applied
+		// Skip if the exact same migration has already been applied
 		if appliedStatement, ok := appliedMigrations[id]; ok {
 			if appliedStatement == statement {
 				slog.Debug("Skipping already applied migration: " + id)
