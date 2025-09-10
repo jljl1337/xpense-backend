@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"net/http"
 )
@@ -54,7 +55,13 @@ func (m *MiddlewareProvider) Auth() Middleware {
 	}
 }
 
-func GetUserIDFromContext(ctx context.Context) (string, bool) {
+// GetUserIDFromContext retrieves the user ID from the context.
+//
+// It returns an error if the user ID is not found or is of an unexpected type.
+func GetUserIDFromContext(ctx context.Context) (string, error) {
 	userID, ok := ctx.Value(UserIDKey).(string)
-	return userID, ok
+	if !ok {
+		return "", errors.New("failed to get user ID from context")
+	}
+	return userID, nil
 }
